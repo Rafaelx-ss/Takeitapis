@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Subcategoria extends Model
 {
     use HasFactory;
 
@@ -14,14 +14,14 @@ class Categoria extends Model
      *
      * @var string
      */
-    protected $table = 'categorias';
+    protected $table = 'subcategorias';
 
     /**
      * Clave primaria personalizada.
      *
      * @var string
      */
-    protected $primaryKey = 'categoriaID';
+    protected $primaryKey = 'subcategoriaID';
 
     /**
      * Indica si los identificadores son autoincrementales.
@@ -50,10 +50,10 @@ class Categoria extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombreCategoria',
-        'descripcionCategoria',
-        'activoCategoria',
-        'estadoCategoria',
+        'nombreSubcategoria',
+        'descripcionSubcategoria',
+        'activoSubcategoria',
+        'estadoSubcategoria',
         'createdById',
         'updatedById',
     ];
@@ -64,8 +64,8 @@ class Categoria extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'activoCategoria' => 'boolean',
-        'estadoCategoria' => 'boolean',
+        'activoSubcategoria' => 'boolean',
+        'estadoSubcategoria' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

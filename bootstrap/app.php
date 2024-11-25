@@ -1,4 +1,5 @@
 <?php
+//bootsraop/app.php
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

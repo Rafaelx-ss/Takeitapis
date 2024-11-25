@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Evento extends Model
 {
     use HasFactory;
 
@@ -14,14 +14,14 @@ class Categoria extends Model
      *
      * @var string
      */
-    protected $table = 'categorias';
+    protected $table = 'eventos';
 
     /**
      * Clave primaria personalizada.
      *
      * @var string
      */
-    protected $primaryKey = 'categoriaID';
+    protected $primaryKey = 'eventosID';
 
     /**
      * Indica si los identificadores son autoincrementales.
@@ -50,10 +50,25 @@ class Categoria extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombreCategoria',
-        'descripcionCategoria',
-        'activoCategoria',
-        'estadoCategoria',
+        'patrocinadorID',
+        'categoriaID',
+        'subCategoriaID',
+        'nombreEvento',
+        'lugarEvento',
+        'maximoParticipantesEvento',
+        'costoEvento',
+        'descripcionEvento',
+        'cpEvento',
+        'municioEvento',
+        'estadoID',
+        'direccionEvento',
+        'telefonoEvento',
+        'fechaEvento',
+        'horaEvento',
+        'duracionEvento',
+        'kitEvento',
+        'activoEvento',
+        'estadoEvento',
         'createdById',
         'updatedById',
     ];
@@ -64,8 +79,8 @@ class Categoria extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'activoCategoria' => 'boolean',
-        'estadoCategoria' => 'boolean',
+        'activoEvento' => 'boolean',
+        'estadoEvento' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

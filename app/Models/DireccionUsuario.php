@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class DireccionUsuario extends Model
 {
     use HasFactory;
 
@@ -14,14 +14,14 @@ class Categoria extends Model
      *
      * @var string
      */
-    protected $table = 'categorias';
+    protected $table = 'direccionesusuarios';
 
     /**
      * Clave primaria personalizada.
      *
      * @var string
      */
-    protected $primaryKey = 'categoriaID';
+    protected $primaryKey = 'direccionesUsuariosID';
 
     /**
      * Indica si los identificadores son autoincrementales.
@@ -50,12 +50,13 @@ class Categoria extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombreCategoria',
-        'descripcionCategoria',
-        'activoCategoria',
-        'estadoCategoria',
-        'createdById',
-        'updatedById',
+        'usuarioID',
+        'cpDireccion',
+        'municipioDireccion',
+        'estadoID',
+        'direccion',
+        'activoDireccion',
+        'estadoDireccion',
     ];
 
     /**
@@ -64,9 +65,25 @@ class Categoria extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'activoCategoria' => 'boolean',
-        'estadoCategoria' => 'boolean',
+        'activoDireccion' => 'boolean',
+        'estadoDireccion' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Relación con el modelo Usuario.
+     */
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'usuarioID', 'usuarioID');
+    }
+
+    /**
+     * Relación con el modelo Estado.
+     */
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'estadoID', 'estadoID');
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Estado extends Model
 {
     use HasFactory;
 
@@ -14,14 +14,14 @@ class Categoria extends Model
      *
      * @var string
      */
-    protected $table = 'categorias';
+    protected $table = 'estados';
 
     /**
      * Clave primaria personalizada.
      *
      * @var string
      */
-    protected $primaryKey = 'categoriaID';
+    protected $primaryKey = 'estadoID';
 
     /**
      * Indica si los identificadores son autoincrementales.
@@ -42,7 +42,7 @@ class Categoria extends Model
      *
      * @var bool
      */
-    public $timestamps = true;
+    public $timestamps = false;
 
     /**
      * Los atributos que se pueden asignar masivamente.
@@ -50,12 +50,10 @@ class Categoria extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombreCategoria',
-        'descripcionCategoria',
-        'activoCategoria',
-        'estadoCategoria',
-        'createdById',
-        'updatedById',
+        'nombreEstado',
+        'paisID',
+        'activoEstado',
+        'estadoEstado',
     ];
 
     /**
@@ -64,9 +62,15 @@ class Categoria extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'activoCategoria' => 'boolean',
-        'estadoCategoria' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'activoEstado' => 'boolean',
+        'estadoEstado' => 'boolean',
     ];
+
+    /**
+     * Relación con el modelo Pais.
+     */
+    public function pais()
+    {
+        return $this->belongsTo(Pais::class, 'paisID', 'paisID');
+    }
 }

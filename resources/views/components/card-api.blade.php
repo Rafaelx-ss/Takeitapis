@@ -6,6 +6,16 @@
                 <strong>URL:</strong> <code>{{ $url }}</code><br>
                 <strong>Descripción:</strong> {{ $description }}
             </p>
+            @if (count($params) > 0)
+            <p class="mt-4 text-sm/relaxed">
+                <strong>Parámetros:</strong>
+                <ul class="list-disc list-inside">
+                    @foreach ($params as $param)
+                        <li> - <code>{{ $param }}</code></li>
+                    @endforeach
+                </ul>
+            </p>
+            @endif
         </div>
         <div>
             @include('components.icon-card')

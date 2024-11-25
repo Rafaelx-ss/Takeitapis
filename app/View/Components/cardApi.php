@@ -9,16 +9,15 @@ class cardApi extends Component
     public $title;
     public $url;
     public $description;
-    public $parameters;
-    public $response;
+    public $params;
 
-    public function __construct($title, $url, $description, $parameters = [], $response = [])
+
+    public function __construct($title, $url, $description, $params = [])
     {
         $this->title = $title;
         $this->url = $url;
         $this->description = $description;
-        $this->parameters = $parameters;
-        $this->response = $response;
+        $this->params = $params;
     }
 
     public function render()
