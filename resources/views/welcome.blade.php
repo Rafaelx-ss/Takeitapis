@@ -67,7 +67,7 @@
         }
 
         .endpoint-card:hover {
-            transform: translateY(-4px) scale(1.01);
+            transform: translateY(-4px) scale(1.00);
             box-shadow: 0 20px 40px rgba(255, 65, 54, 0.15),
                        0 0 20px rgba(255, 133, 27, 0.1),
                        0 0 0 1px rgba(255, 133, 27, 0.2);
@@ -172,7 +172,7 @@
             overflow: hidden;
         }
 
-        pre::before {
+        /* pre::before {
             content: '';
             position: absolute;
             top: 0;
@@ -185,8 +185,8 @@
                 transparent
             );
             transform: translateX(-100%);
-            animation: shimmer 3s infinite;
-        }
+            animation: shimmer 4s infinite;
+        } */
 
         .gradient-text {
             background: linear-gradient(
@@ -321,7 +321,7 @@
                             <i class="fas fa-reply mr-3 text-fire-orange"></i>
                             Ejemplo de Respuesta
                         </h3>
-                        <pre class="p-8 overflow-x-auto"><code class="text-sm">{{ json_encode($endpoint->response_example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
+                        <pre class="p-8 overflow-x-hidden "><code class="text-sm">{{ json_encode($endpoint->response_example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
                     </div>
                 </div>
             @endforeach
@@ -355,26 +355,6 @@
             });
         });
 
-        // // Añadir efecto de hover 3D a las tarjetas
-        // document.querySelectorAll('.endpoint-card').forEach(card => {
-        //     card.addEventListener('mousemove', e => {
-        //         const rect = card.getBoundingClientRect();
-        //         const x = e.clientX - rect.left;
-        //         const y = e.clientY - rect.top;
-
-        //         const xc = rect.width / 2;
-        //         const yc = rect.height / 2;
-
-        //         const dx = x - xc;
-        //         const dy = y - yc;
-
-        //         card.style.transform = `perspective(1000px) rotateY(${dx / 50}deg) rotateX(${-dy / 50}deg) translateZ(10px)`;
-        //     });
-
-        //     card.addEventListener('mouseleave', () => {
-        //         card.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(0px)';
-        //     });
-        // });
     </script>
 
     <style>

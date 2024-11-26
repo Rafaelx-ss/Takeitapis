@@ -11,91 +11,106 @@ class ApiDocumentationController extends Controller
     {
         $endpoints = collect([
             [
-                'name' => 'Obtener Perfil de Usuario',
+                'name' => 'Obtener Todas las Categorías',
                 'method' => 'GET',
-                'endpoint' => '/api/v1/usuarios/{id}',
-                'description' => 'Obtiene información detallada sobre el perfil de un usuario específico, incluyendo sus preferencias y configuraciones.',
-                'parameters' => [
-                    'id' => [
-                        'type' => 'integer',
-                        'description' => 'Identificador único del usuario'
-                    ],
-                    'incluir' => [
-                        'type' => 'string',
-                        'description' => 'Lista opcional separada por comas de datos relacionados (ej: publicaciones,comentarios)'
-                    ]
-                ],
-                'headers' => [
-                    'Authorization' => 'Bearer {token}',
-                    'Accept' => 'application/json'
-                ],
+                'endpoint' => '/api/getcategorias',
+                'description' => 'Obtiene todas las categorías de eventos disponibles.',
+                'parameters' => [],
+                'headers' => [],
                 'response_example' => [
-                    'id' => 1,
-                    'nombre_usuario' => 'juan_perez',
-                    'correo' => 'juan@ejemplo.com',
-                    'perfil' => [
-                        'nombre_completo' => 'Juan Pérez',
-                        'url_avatar' => 'https://api.ejemplo.com/avatars/1.jpg',
-                        'biografia' => 'Desarrollador de software y entusiasta de la tecnología'
+                    [
+                        'categoriaID' => 1,
+                        'nombreCategoria' => 'Deportes',
+                        'descripcionCategoria' => 'Eventos y competencias deportivas de distintos niveles y disciplinas',
+                        'activoCategoria' => true,
+                        'estadoCategoria' => true,
+                        'created_at' => '2024-11-26T19:39:26.000000Z',
+                        'updated_at' => '2024-11-26T19:39:26.000000Z'
                     ],
-                    'configuracion' => [
-                        'notificaciones_activas' => true,
-                        'tema' => 'oscuro',
-                        'idioma' => 'es'
-                    ],
-                    'creado_en' => '2024-01-10T15:30:00Z',
-                    'actualizado_en' => '2024-01-10T15:30:00Z'
+                    [
+                        'categoriaID' => 2,
+                        'nombreCategoria' => 'Arte',
+                        'descripcionCategoria' => 'Eventos artísticos como exposiciones, presentaciones y talleres',
+                        'activoCategoria' => true,
+                        'estadoCategoria' => true,
+                        'created_at' => '2024-11-26T19:39:26.000000Z',
+                        'updated_at' => '2024-11-26T19:39:26.000000Z'
+                    ]
+
                 ]
             ],
             [
-                'name' => 'Crear Nuevo Pedido',
+                'name' => 'Registro de Usuario',
                 'method' => 'POST',
-                'endpoint' => '/api/v1/pedidos',
-                'description' => 'Crea un nuevo pedido en el sistema con los productos especificados y detalles de envío.',
+                'endpoint' => '/api/register',
+                'description' => 'Registra un nuevo usuario en el sistema con los datos proporcionados.',
                 'parameters' => [
-                    'productos' => [
-                        'type' => 'array',
-                        'description' => 'Array de IDs de productos y cantidades'
-                    ],
-                    'direccion_envio' => [
-                        'type' => 'object',
-                        'description' => 'Detalles de la dirección de envío del cliente'
-                    ],
-                    'metodo_pago' => [
+                    'nombreUsuario' => [
                         'type' => 'string',
-                        'description' => 'Identificador del método de pago (ej: tarjeta, paypal)'
-                    ]
+                        'description' => 'Nombre completo del usuario. Mínimo 2 caracteres. Obligatorio.',
+                    ],
+                    'usuario' => [
+                        'type' => 'string',
+                        'description' => 'Nombre de usuario único. Mínimo 4 caracteres. Obligatorio.',
+                    ],
+                    'correoUsuario' => [
+                        'type' => 'string',
+                        'description' => 'Correo electrónico único del usuario. Debe ser un correo válido. Obligatorio.',
+                    ],
+                    'contrasena' => [
+                        'type' => 'string',
+                        'description' => 'Contraseña del usuario. Mínimo 6 caracteres. Obligatorio.',
+                    ],
+                    'telefonoUsuario' => [
+                        'type' => 'string',
+                        'description' => 'Teléfono del usuario. Opcional.',
+                    ],
+                    'fechaNacimientoUsuario' => [
+                        'type' => 'string',
+                        'description' => 'Fecha de nacimiento del usuario en formato YYYY-MM-DD. Opcional.',
+                    ],
+                    'generoUsuario' => [
+                        'type' => 'string',
+                        'description' => 'Género del usuario: MASCULINO, FEMENINO, OTRO. Opcional.',
+                    ],
+                    'rolUsuario' => [
+                        'type' => 'string',
+                        'description' => 'Rol del usuario: participante u organizador. Obligatorio.',
+                    ],
                 ],
                 'headers' => [
-                    'Authorization' => 'Bearer {token}',
-                    'Content-Type' => 'application/json'
+                    'Content-Type' => 'application/json',
                 ],
                 'response_example' => [
-                    'id_pedido' => 'PED-2024-001',
-                    'estado' => 'pendiente',
-                    'monto_total' => 2499.99,
-                    'productos' => [
-                        [
-                            'id_producto' => 'PROD-123',
-                            'nombre' => 'Auriculares Premium',
-                            'cantidad' => 1,
-                            'precio_unitario' => 2499.99
-                        ]
+                    'success' => true,
+                    'message' => 'Usuario registrado exitosamente',
+                    'data' => [
+                        'id' => 1,
+                        'nombreUsuario' => 'Juan Pérez',
+                        'usuario' => 'juanperez',
+                        'correoUsuario' => 'juanperez@example.com',
+                        'telefonoUsuario' => null,
+                        'fechaNacimientoUsuario' => '1990-01-01',
+                        'generoUsuario' => 'MASCULINO',
+                        'rolUsuario' => 'participante',
+                        'created_at' => '2024-11-26T16:00:00Z',
+                        'updated_at' => '2024-11-26T16:00:00Z',
                     ],
-                    'direccion_envio' => [
-                        'calle' => 'Av. Libertador 123',
-                        'ciudad' => 'Buenos Aires',
-                        'provincia' => 'CABA',
-                        'codigo_postal' => '1425',
-                        'pais' => 'Argentina'
+                ],
+                'error_responses' => [
+                    '400' => [
+                        'message' => 'Datos de registro inválidos',
+                        'errors' => [
+                            'usuario' => ['El usuario ya existe.'],
+                            'correoUsuario' => ['El correo ya está en uso.'],
+                        ],
                     ],
-                    'detalles_pago' => [
-                        'metodo' => 'tarjeta',
-                        'estado' => 'autorizado'
+                    '500' => [
+                        'message' => 'Error al crear la cuenta',
                     ],
-                    'creado_en' => '2024-01-10T16:00:00Z'
-                ]
-            ]
+                ],
+            ],
+
         ])->map(function ($item) {
             return (object) $item;
         });

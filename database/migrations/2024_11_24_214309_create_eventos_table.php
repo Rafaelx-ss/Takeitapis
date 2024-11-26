@@ -4,15 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateEventosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('eventos', function (Blueprint $table) {
-            $table->id('eventosID');
+            $table->bigIncrements('eventosID');
             $table->unsignedBigInteger('patrocinadorID');
             $table->unsignedBigInteger('categoriaID');
             $table->unsignedBigInteger('subCategoriaID');
@@ -30,23 +27,18 @@ return new class extends Migration
             $table->string('horaEvento', 255);
             $table->string('duracionEvento', 255);
             $table->string('kitEvento', 255)->nullable();
-            $table->timestamps(); // createdAt y updatedAt
             $table->boolean('activoEvento')->default(true);
             $table->boolean('estadoEvento')->default(true);
+            $table->timestamps();
 
-            // Llaves foráneas
-            $table->foreign('patrocinadorID')->references('patrocinadorID')->on('patrocinadores');
-            $table->foreign('categoriaID')->references('categoriaID')->on('categorias');
-            $table->foreign('subCategoriaID')->references('subcategoriaID')->on('subcategorias');
+            $table->foreign('patrocinadorID')->references('patrocinadorID')->on('patrocinadores')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreign('categoriaID')->references('categoriaID')->on('categorias')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreign('subCategoriaID')->references('subcategoriaID')->on('subcategorias')->onUpdate('restrict')->onDelete('cascade');
         });
     }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('eventos');
     }
-};
+}
