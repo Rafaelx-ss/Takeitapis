@@ -172,22 +172,6 @@
             overflow: hidden;
         }
 
-        /* pre::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg,
-                transparent,
-                rgba(255, 255, 255, 0.03),
-                transparent
-            );
-            transform: translateX(-100%);
-            animation: shimmer 4s infinite;
-        } */
-
         .gradient-text {
             background: linear-gradient(
                 45deg,
@@ -238,6 +222,28 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+
+        .search-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            outline: none;
+        }
+
+        .search-button {
+            background: linear-gradient(135deg, var(--fire-orange), #e67300);
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 133, 27, 0.3);
+        }
     </style>
 </head>
 <body class="min-h-screen py-12">
@@ -247,16 +253,37 @@
     <div class="container mx-auto px-4 relative z-10">
         <div class="text-center mb-16">
             <h1 class="text-6xl font-bold mb-4 gradient-text floating">
-                Documentación API
+                TAKE IT API
             </h1>
-            <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-                Explora nuestra colección de endpoints con documentación interactiva y ejemplos en tiempo real
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                Todas las API del proyecto TAKE IT documentadas.
             </p>
+
+            <!-- Buscador -->
+            <div class="max-w-2xl mx-auto">
+                <div class="flex gap-4">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Buscar API por nombre, endpoint o descripción..."
+                        value="{{ $search ?? '' }}"
+                        class="search-input w-full px-6 py-4 rounded-xl text-white placeholder-gray-400"
+                    >
+                    <button id="searchButton" class="search-button px-8 py-4 rounded-xl text-white font-semibold">
+                        <i class="fas fa-search mr-2"></i>
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+            <div id="noResults" class="mt-8 text-gray-400 hidden">
+                No se encontraron resultados para "<span id="searchTerm" class="text-white"></span>"
+            </div>
         </div>
 
         <div class="grid gap-12">
             @foreach($endpoints as $endpoint)
-                <div class="endpoint-card rounded-2xl p-8 shadow-2xl">
+                <div class="endpoint-card rounded-2xl p-8 shadow-2xl" data-searchable="{{ strtolower($endpoint->name . ' ' . $endpoint->endpoint . ' ' . $endpoint->description . ' ' . $endpoint->method) }}">
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-3xl font-bold text-white">
                             {{ $endpoint->name }}
@@ -321,7 +348,7 @@
                             <i class="fas fa-reply mr-3 text-fire-orange"></i>
                             Ejemplo de Respuesta
                         </h3>
-                        <pre class="p-8 overflow-x-hidden "><code class="text-sm">{{ json_encode($endpoint->response_example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
+                        <pre class="p-8 overflow-x-hidden param-card"><code class="text-sm">{{ json_encode($endpoint->response_example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</code></pre>
                     </div>
                 </div>
             @endforeach
@@ -355,6 +382,47 @@
             });
         });
 
+
+
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const endpointsList = document.getElementById('endpointsList');
+        const noResults = document.getElementById('noResults');
+        const searchTerm = document.getElementById('searchTerm');
+        let timeoutId;
+
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.endpoint-card');
+            let hasResults = false;
+
+            cards.forEach(card => {
+                const searchableText = card.dataset.searchable;
+                const isMatch = query.split(' ').every(term =>
+                    searchableText.includes(term.toLowerCase())
+                );
+
+                card.style.display = isMatch ? 'block' : 'none';
+                if (isMatch) hasResults = true;
+            });
+
+            noResults.style.display = query && !hasResults ? 'block' : 'none';
+            searchTerm.textContent = query;
+        }
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(performSearch, 300);
+        });
+
+        searchButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
+
+        if (searchInput.value) {
+            performSearch();
+        }
     </script>
 
     <style>

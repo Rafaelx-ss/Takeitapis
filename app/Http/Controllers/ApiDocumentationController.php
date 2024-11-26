@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 
 class ApiDocumentationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+
         $endpoints = collect([
             [
                 'name' => 'Obtener Todas las Categorías',
@@ -36,7 +38,6 @@ class ApiDocumentationController extends Controller
                         'created_at' => '2024-11-26T19:39:26.000000Z',
                         'updated_at' => '2024-11-26T19:39:26.000000Z'
                     ]
-
                 ]
             ],
             [
@@ -110,11 +111,45 @@ class ApiDocumentationController extends Controller
                     ],
                 ],
             ],
-
         ])->map(function ($item) {
             return (object) $item;
         });
 
-        return view('welcome', compact('endpoints'));
+        if ($request->ajax()) {
+            $filteredEndpoints = $this->filterEndpoints($endpoints, $search);
+            return response()->json($filteredEndpoints);
+        }
+
+        if ($search) {
+            $endpoints = $this->filterEndpoints($endpoints, $search);
+        }
+
+        return view('welcome', compact('endpoints', 'search'));
+    }
+
+    private function filterEndpoints($endpoints, $search)
+    {
+        if (!$search) {
+            return $endpoints;
+        }
+
+        $search = mb_strtolower(trim($search));
+
+        return $endpoints->filter(function ($endpoint) use ($search) {
+            $searchableText = mb_strtolower(implode(' ', [
+                $endpoint->name,
+                $endpoint->endpoint,
+                $endpoint->description,
+                $endpoint->method
+            ]));
+
+            foreach (explode(' ', $search) as $term) {
+                if (!str_contains($searchableText, $term)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
     }
 }
