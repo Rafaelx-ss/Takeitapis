@@ -42,7 +42,7 @@ class Pais extends Model
      *
      * @var bool
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * Los atributos que se pueden asignar masivamente.
@@ -53,6 +53,8 @@ class Pais extends Model
         'nombrePais',
         'activoPais',
         'estadoPais',
+        'createdById',
+        'updatedById',
     ];
 
     /**
@@ -63,6 +65,8 @@ class Pais extends Model
     protected $casts = [
         'activoPais' => 'boolean',
         'estadoPais' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**

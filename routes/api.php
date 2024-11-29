@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\{
     CategoriaController,
     DireccionUsuarioController,
+    PaisController,
 };
 
 Route::prefix('categorias')->group(function () {
@@ -23,6 +24,11 @@ Route::prefix('categorias')->group(function () {
 });
 
 
+
+Route::prefix('paises')->group(function () {
+    Route::get('get/', [PaisController::class, 'index']);
+    Route::post('post/', [PaisController::class, 'store']);
+});
 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);
 
