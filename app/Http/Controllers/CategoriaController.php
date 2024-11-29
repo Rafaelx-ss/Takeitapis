@@ -106,16 +106,21 @@ class CategoriaController extends Controller
     {
         $query = Categoria::query();
 
-        if ($request->has('categoriaID')) {
-            $query->where('categoriaID', $request->categoriaID);
-        }
+        $filters = [
+            'categoriaID' => '=',
+            'nombreCategoria' => 'like',
+            'descripcionCategoria' => 'like',
+            'activoCategoria' => '=',
+            'estadoCategoria' => '=',
+            'created_at' => 'like',
+            'updated_at' => 'like'
+        ];
 
-        if ($request->has('activoCategoria')) {
-            $query->where('activoCategoria', $request->activoCategoria);
-        }
-
-        if ($request->has('estadoCategoria')) {
-            $query->where('estadoCategoria', $request->estadoCategoria);
+        foreach ($filters as $field => $operator) {
+            if ($request->has($field)) {
+            $value = $request->input($field);
+            $query->where($field, $operator, $operator === 'like' ? "%$value%" : $value);
+            }
         }
 
         return response()->json($query->get());
@@ -137,6 +142,6 @@ class CategoriaController extends Controller
         $categoria->activoCategoria = !$categoria->activoCategoria;
         $categoria->save();
 
-        return response()->json($categoria);
+        return response()->json(['susccess' => 'Categoría actualizada exitosamente']);
     }
 }
