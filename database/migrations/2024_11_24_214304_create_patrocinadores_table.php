@@ -15,8 +15,10 @@ class CreatePatrocinadoresTable extends Migration
             $table->string('representantePatrocinador', 255);
             $table->string('rfcPatrocinador', 255);
             $table->string('correoPatrocinador', 255);
-            $table->binary('telefonoPatrocinador');
+            $table->string('telefonoPatrocinador', 50);
             $table->string('numeroRepresentantePatrocinador', 255);
+            $table->boolean('activoPatrocinador')->default(true);
+            $table->boolean('estadoPatrocinador')->default(true);
             $table->timestamps();
         });
     }
