@@ -2,7 +2,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
 class CreateUsuariosTable extends Migration
 {
     public function up()
@@ -22,6 +22,11 @@ class CreateUsuariosTable extends Migration
             $table->boolean('estadoUsuario')->default(true);
             $table->timestamps();
         });
+
+        DB::table('usuarios')->insert([
+            ['nombreUsuario' => 'Administrador', 'usuario' => 'admin', 'correoUsuario' => 'admin@gmail.com', 'contrasena' => bcrypt('admin'), 'rolUsuario' => 'Organizador', 'telefonoUsuario' => '1234567890', 'activoUsuario' => true, 'estadoUsuario' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['nombreUsuario' => 'Usuario', 'usuario' => 'usuario', 'correoUsuario' => 'usuario@gmail.com', 'contrasena' => bcrypt('ususario'), 'rolUsuario' => 'Participante', 'telefonoUsuario' => '1234567890', 'activoUsuario' => true, 'estadoUsuario' => true, 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     public function down()

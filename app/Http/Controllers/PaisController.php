@@ -29,11 +29,10 @@ class PaisController extends Controller
     public function store(Request $request)
     {
 
-       
         //post
         $validatedData = $request->validate([
             'nombrePais' => 'required|string|max:255',
-        
+
         ]);
 
         $paises = Pais::create($validatedData);
@@ -128,7 +127,7 @@ class PaisController extends Controller
 
         return response()->json($query->get());
 
-        
+
     }
 
     public function toggle($id)
