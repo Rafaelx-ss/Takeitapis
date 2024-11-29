@@ -44,8 +44,6 @@ class CategoriaController extends Controller
         $validatedData = $request->validate([
             'nombreCategoria' => 'required|string|max:255',
             'descripcionCategoria' => 'nullable|string',
-            'activoCategoria' => 1,
-            'estadoCategoria' => 1,
         ]);
 
         $categoria = Categoria::create($validatedData);
@@ -71,8 +69,6 @@ class CategoriaController extends Controller
         $validatedData = $request->validate([
             'nombreCategoria' => 'nullable|string|max:255',
             'descripcionCategoria' => 'nullable|string',
-            'activoCategoria' => 1,
-            'estadoCategoria' => 1,
         ]);
 
         $categoria->update($validatedData);
@@ -94,7 +90,7 @@ class CategoriaController extends Controller
             return response()->json(['error' => 'Categoría no encontrada'], 404);
         }
 
-        $categoria->activoCategoria = !$categoria->activoCategoria;
+        $categoria->estadoCategoria = 0;
         $categoria->save();
 
         return response()->json(['message' => 'Categoría eliminada exitosamente']);
@@ -109,6 +105,10 @@ class CategoriaController extends Controller
     public function filter(Request $request)
     {
         $query = Categoria::query();
+
+        if ($request->has('categoriaID')) {
+            $query->where('categoriaID', $request->categoriaID);
+        }
 
         if ($request->has('activoCategoria')) {
             $query->where('activoCategoria', $request->activoCategoria);

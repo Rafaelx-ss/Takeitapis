@@ -17,7 +17,7 @@ Route::prefix('categorias')->group(function () {
 
     Route::delete('delete/{id}', [CategoriaController::class, 'destroy']);
 
-    Route::get('get/filtrar', [CategoriaController::class, 'filter']);
+    Route::get('/filtrar', [CategoriaController::class, 'filter']);
 
     Route::patch('/{id}/toggle', [CategoriaController::class, 'toggle']);
 });
