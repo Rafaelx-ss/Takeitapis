@@ -13,6 +13,8 @@ class PatrocinadorController extends Controller
     public function index()
     {
         //
+        $patrocinador = Patrocionador::all();
+        return response()->json($patrocinador);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Http\Controllers\{
     PaisController,
     EstadoController,
     EventoController,
+    PatrocinadorController,
 };
 
 Route::prefix('categorias')->group(function () {
@@ -55,6 +56,16 @@ Route::prefix('eventos')->group(function () {
     Route::delete('delete/{id}', [EventoController::class, 'destroy']);
     Route::get('/filtrar', [EventoController::class, 'filter']);
     Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);
+});
+
+Route::prefix('patrocinadores')->group(function () {
+    Route::get('get/', [PatrocinadorController::class, 'index']);
+    Route::post('post/', [PatrocinadorController::class, 'store']);
+    Route::get('get/{id}', [PatrocinadorController::class, 'show']);
+    Route::put('put/{id}', [PatrocinadorController::class, 'update']);
+    Route::delete('delete/{id}', [PatrocinadorController::class, 'destroy']);
+    Route::get('/filtrar', [PatrocinadorController::class, 'filter']);
+    Route::patch('/{id}/toggle', [PatrocinadorController::class, 'toggle']);
 });
 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);

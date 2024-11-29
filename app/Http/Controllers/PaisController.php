@@ -138,8 +138,8 @@ class PaisController extends Controller
         if (!$Pais) {
             return response()->json(['error' => 'Pais no encontrada'], 404);
         }
-        $categoria->activoPais = !$categoria->activoPais;
-        $categoria->save();
+        $Pais->activoPais = !$Pais->activoPais;
+        $Pais->save();
 
         return response()->json(['susccess' => 'Pais actualizada exitosamente']);
     }

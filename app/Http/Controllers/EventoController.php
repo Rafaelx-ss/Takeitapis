@@ -123,12 +123,63 @@ class EventoController extends Controller
         $evento = Evento::find($evento);
 
         if (!$evento) {
-            return response()->json(['error' => 'Categoría no encontrada'], 404);
+            return response()->json(['error' => 'Eventos no encontrada'], 404);
         }
 
-        $evento->estadoCategoria = 0;
+        $evento->estadoEvento = 0;
         $evento->save();
 
-        return response()->json(['message' => 'Categoría eliminada exitosamente']);
+        return response()->json(['message' => 'Eventos eliminada exitosamente']);
+    }
+
+    public function filter(Request $request)
+    {
+        $query = Evento::query();
+
+        $filters = [
+            'eventosID' => '=',
+            'patrocinadorID' => '=',
+            'categoriaID' => '=',
+            'subCategoriaID' => '=',
+            'nombreEvento' => 'like',
+            'lugarEvento' => 'like',
+            'maximoParticipantesEvento' => 'like',
+            'costoEvento' => 'like',
+            'descripcionEvento' => 'like',
+            'cpEvento' => 'like',
+            'municioEvento' => 'like',
+            'estadoID' => '=',
+            'direccionEvento' => 'like',
+            'telefonoEvento' => 'like',
+            'fechaEvento' => 'like',
+            'duracionEvento' => 'like',
+            'kitEvento' => 'like',
+            'activoEvento' => '=',
+            'estadoEvento' => '=',
+            'created_at' => 'like',
+            'updated_at' => 'like'
+        ];
+
+        foreach ($filters as $field => $operator) {
+            if ($request->has($field)) {
+            $value = $request->input($field);
+            $query->where($field, $operator, $operator === 'like' ? "%$value%" : $value);
+            }
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function toggle($id)
+    {
+        $eventos = Evento::find($id);
+
+        if (!$eventos) {
+            return response()->json(['error' => 'Evento no encontrada'], 404);
+        }
+        $eventos->activoEvento = !$eventos->activoEvento;
+        $eventos->save();
+
+        return response()->json(['susccess' => 'Evento actualizada exitosamente']);
     }
 }

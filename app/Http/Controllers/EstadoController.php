@@ -111,7 +111,7 @@ class EstadoController extends Controller
         $filters = [
             'estadoID' => '=',
             'nombreEstado' => 'like',
-            'paisID' => 'like',
+            'paisID' => '=',
             'activoEstado' => '=',
             'estadoEstado' => '=',
             'created_at' => 'like',
