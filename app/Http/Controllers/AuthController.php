@@ -70,7 +70,7 @@ class AuthController extends Controller
                 $token = $user->createToken('authToken')->plainTextToken;
 
                 return $this->successResponse([
-                    'user' => $user->makeHidden(['contrasena']),
+                    'user' => $user,
                     'token' => $token,
                 ], 'Inicio de sesión exitoso');
             }
