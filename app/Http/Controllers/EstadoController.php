@@ -21,6 +21,7 @@ class EstadoController extends Controller
     public function create()
     {
         //
+        
     }
 
     /**
@@ -29,14 +30,29 @@ class EstadoController extends Controller
     public function store(Request $request)
     {
         //
+        $validatedData = $request->validate([
+            'nombreEstado' => 'required|string|max:255',
+            'paisID' => 'required|integer',
+        ]);
+
+        $Estado = Estado::create($validatedData);
+
+        return response()->json($Estado, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Estado $estado)
+    public function show($id)
     {
         //
+        $Estado = Estado::find($id);
+
+        if (!$Estado) {
+            return response()->json(['error' => 'Estado no encontrada'], 404);
+        }
+
+        return response()->json($Estado);
     }
 
     /**
@@ -50,16 +66,80 @@ class EstadoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Estado $estado)
+    public function update(Request $request, $id)
     {
         //
+        $Estado = Estado::find($id);
+
+        if (!$Estado) {
+            return response()->json(['error' => 'Estado no encontrada'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'nombreEstado' => 'required|string|max:255',
+            'paisID' => 'required|integer',
+        ]);
+
+        $Estado->update($validatedData);
+
+        return response()->json($Estado);
+    
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Estado $estado)
+    public function destroy($id)
     {
         //
+        $Estado = Estado::find($id);
+
+        if (!$Estado) {
+            return response()->json(['error' => 'Estado no encontrada'], 404);
+        }
+
+        $Estado->estadoEstado = 0;
+        $Estado->save();
+
+        return response()->json(['message' => 'Estado eliminada exitosamente']);
+    }
+
+    public function filter(Request $request)
+    {
+        $query = Estado::query();
+
+        $filters = [
+            'estadoID' => '=',
+            'nombreEstado' => 'like',
+            'paisID' => 'like',
+            'activoEstado' => '=',
+            'estadoEstado' => '=',
+            'created_at' => 'like',
+            'updated_at' => 'like'
+        ];
+
+        foreach ($filters as $field => $operator) {
+            if ($request->has($field)) {
+            $value = $request->input($field);
+            $query->where($field, $operator, $operator === 'like' ? "%$value%" : $value);
+            }
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function toggle($id)
+    {
+        $Estado = Estado::find($id);
+
+        if (!$Estado) {
+            return response()->json(['error' => 'Categoría no encontrada'], 404);
+        }
+        $Estado->activoEstado = !$Estado->activoEstado;
+        $Estado->save();
+
+        return response()->json(['susccess' => 'Categoría actualizada exitosamente']);
     }
 }
+
+

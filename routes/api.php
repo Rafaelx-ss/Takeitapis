@@ -5,6 +5,8 @@ use App\Http\Controllers\{
     CategoriaController,
     DireccionUsuarioController,
     PaisController,
+    EstadoController,
+    EventoController,
 };
 
 Route::prefix('categorias')->group(function () {
@@ -28,6 +30,31 @@ Route::prefix('categorias')->group(function () {
 Route::prefix('paises')->group(function () {
     Route::get('get/', [PaisController::class, 'index']);
     Route::post('post/', [PaisController::class, 'store']);
+    Route::get('get/{id}', [PaisController::class, 'show']);
+    Route::put('put/{id}', [PaisController::class, 'update']);
+    Route::delete('delete/{id}', [PaisController::class, 'destroy']);
+    Route::get('/filtrar', [PaisController::class, 'filter']);
+    Route::patch('/{id}/toggle', [PaisController::class, 'toggle']);
+});
+
+Route::prefix('estados')->group(function () {
+    Route::get('get/', [EstadoController::class, 'index']);
+    Route::post('post/', [EstadoController::class, 'store']);
+    Route::get('get/{id}', [EstadoController::class, 'show']);
+    Route::put('put/{id}', [EstadoController::class, 'update']);
+    Route::delete('delete/{id}', [EstadoController::class, 'destroy']);
+    Route::get('/filtrar', [EstadoController::class, 'filter']);
+    Route::patch('/{id}/toggle', [EstadoController::class, 'toggle']);
+});
+
+Route::prefix('eventos')->group(function () {
+    Route::get('get/', [EventoController::class, 'index']);
+    Route::post('post/', [EventoController::class, 'store']);
+    Route::get('get/{id}', [EventoController::class, 'show']);
+    Route::put('put/{id}', [EventoController::class, 'update']);
+    Route::delete('delete/{id}', [EventoController::class, 'destroy']);
+    Route::get('/filtrar', [EventoController::class, 'filter']);
+    Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);
 });
 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);

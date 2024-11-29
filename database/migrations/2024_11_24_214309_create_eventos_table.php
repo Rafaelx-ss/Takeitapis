@@ -20,7 +20,7 @@ class CreateEventosTable extends Migration
             $table->string('descripcionEvento', 255)->nullable();
             $table->string('cpEvento', 255);
             $table->string('municioEvento', 255);
-            $table->string('estadoID', 255);
+            $table->unsignedBigInteger('estadoID');
             $table->string('direccionEvento', 255);
             $table->string('telefonoEvento', 255);
             $table->string('fechaEvento', 255);
@@ -34,6 +34,7 @@ class CreateEventosTable extends Migration
             $table->foreign('patrocinadorID')->references('patrocinadorID')->on('patrocinadores')->onUpdate('restrict')->onDelete('cascade');
             $table->foreign('categoriaID')->references('categoriaID')->on('categorias')->onUpdate('restrict')->onDelete('cascade');
             $table->foreign('subCategoriaID')->references('subcategoriaID')->on('subcategorias')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreign('estadoID')->references('estadoID')->on('estados')->onUpdate('restrict')->onDelete('cascade');
         });
     }
 

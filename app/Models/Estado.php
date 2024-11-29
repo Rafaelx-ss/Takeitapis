@@ -42,7 +42,7 @@ class Estado extends Model
      *
      * @var bool
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * Los atributos que se pueden asignar masivamente.
@@ -54,6 +54,8 @@ class Estado extends Model
         'paisID',
         'activoEstado',
         'estadoEstado',
+        'createdById',
+        'updatedById',
     ];
 
     /**
@@ -64,6 +66,9 @@ class Estado extends Model
     protected $casts = [
         'activoEstado' => 'boolean',
         'estadoEstado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        
     ];
 
     /**

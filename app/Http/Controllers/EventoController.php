@@ -29,14 +29,44 @@ class EventoController extends Controller
     public function store(Request $request)
     {
         //
+        $validatedData = $request->validate([
+            'patrocinadorID' => 'required|integer',
+            'categoriaID' => 'required|integer',
+            'subCategoriaID' => 'required|integer',
+            'nombreEvento' => 'required|string|max:255',
+            'lugarEvento' => 'required|string|max:255',
+            'maximoParticipantesEvento' => 'nullable|string|max:255',
+            'costoEvento' => 'nullable|numeric',
+            'descripcionEvento' => 'nullable|string|max:255',
+            'cpEvento' => 'required|string|max:255',
+            'municioEvento' => 'required|string|max:255',
+            'estadoID' => 'required|integer',
+            'direccionEvento' => 'required|string|max:255',
+            'telefonoEvento' => 'required|string|max:255',
+            'fechaEvento' => 'required|string|max:255',
+            'horaEvento' => 'required|string|max:255',
+            'duracionEvento' => 'required|string|max:255',
+            'kitEvento' => 'required|string|max:255',
+        ]);
+
+        $eventos = Evento::create($validatedData);
+
+        return response()->json($eventos, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Evento $evento)
+    public function show($evento)
     {
         //
+        $eventos = Evento::find($evento);
+
+        if (!$eventos) {
+            return response()->json(['error' => 'Evento no encontrada'], 404);
+        }
+
+        return response()->json($eventos);
     }
 
     /**
@@ -50,16 +80,55 @@ class EventoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Evento $evento)
+    public function update(Request $request,  $evento)
     {
         //
+        $eventos = Evento::find($evento);
+
+        if (!$eventos) {
+            return response()->json(['error' => 'Eventos no encontrada'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'patrocinadorID' => 'required|integer',
+            'categoriaID' => 'required|integer',
+            'subCategoriaID' => 'required|integer',
+            'nombreEvento' => 'required|string|max:255',
+            'lugarEvento' => 'required|string|max:255',
+            'maximoParticipantesEvento' => 'nullable|string|max:255',
+            'costoEvento' => 'nullable|numeric',
+            'descripcionEvento' => 'nullable|string|max:255',
+            'cpEvento' => 'required|string|max:255',
+            'municioEvento' => 'required|string|max:255',
+            'estadoID' => 'required|integer',
+            'direccionEvento' => 'required|string|max:255',
+            'telefonoEvento' => 'required|string|max:255',
+            'fechaEvento' => 'required|string|max:255',
+            'horaEvento' => 'required|string|max:255',
+            'duracionEvento' => 'required|string|max:255',
+            'kitEvento' => 'required|string|max:255',
+        ]);
+
+        $eventos->update($validatedData);
+
+        return response()->json($eventos);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Evento $evento)
+    public function destroy($evento)
     {
         //
+        $evento = Evento::find($evento);
+
+        if (!$evento) {
+            return response()->json(['error' => 'Categoría no encontrada'], 404);
+        }
+
+        $evento->estadoCategoria = 0;
+        $evento->save();
+
+        return response()->json(['message' => 'Categoría eliminada exitosamente']);
     }
 }
