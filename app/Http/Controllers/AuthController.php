@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +9,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Usuario;
 
+
 class AuthController extends Controller
 {
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
+
+
     /**
      * Registra un nuevo usuario.
      *
@@ -23,26 +35,18 @@ class AuthController extends Controller
             $validatedData = $request->validate([
                 'nombreUsuario' => 'required|string|min:2|max:100',
                 'usuario' => 'required|string|min:4|max:50|unique:usuarios,usuario',
-                'correoUsuario' => 'required|email|max:150|unique:usuarios,correoUsuario',
-                'contrasena' => 'required|string|min:6|max:100',
+                'email' => 'required|email|max:150|unique:usuarios,email',
+                'password' => 'required|string|min:6|max:100',
                 'telefonoUsuario' => 'nullable|string|min:8|max:15',
                 'fechaNacimientoUsuario' => 'nullable|date',
                 'generoUsuario' => 'nullable|in:MASCULINO,FEMENINO,OTRO',
                 'rolUsuario' => 'required|in:participante,organizador',
             ]);
 
-            $user = Usuario::create([
-                'nombreUsuario' => $validatedData['nombreUsuario'],
-                'usuario' => $validatedData['usuario'],
-                'correoUsuario' => $validatedData['correoUsuario'],
-                'contrasena' => Hash::make($validatedData['contrasena']), // Encriptar la contraseña
-                'telefonoUsuario' => $validatedData['telefonoUsuario'] ?? null,
-                'fechaNacimientoUsuario' => $validatedData['fechaNacimientoUsuario'] ?? null,
-                'generoUsuario' => $validatedData['generoUsuario'] ?? null,
-                'rolUsuario' => $validatedData['rolUsuario'],
-            ]);
 
-            return $this->successResponse($user->makeHidden(['contrasena']), 'Usuario registrado exitosamente', 201);
+            $user = Usuario::create($validatedData);
+
+            return $this->successResponse($user->makeHidden(['password']), 'Usuario registrado exitosamente', 201);
 
         } catch (ValidationException $e) {
             return $this->errorResponse('Datos de registro inválidos', 400, $e->errors());
@@ -51,31 +55,32 @@ class AuthController extends Controller
         }
     }
 
+
     /**
-     * Inicia sesión con credenciales válidas.
+     * Get a JWT via given credentials.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
         try {
             $credentials = $request->validate([
-                'usuario' => 'required|string',
-                'contrasena' => 'required|string',
+                'email' => 'required|string|email',
+                'password' => 'required|string',
             ]);
 
-            if (Auth::attempt(['usuario' => $credentials['usuario'], 'password' => $credentials['contrasena']])) {
-                $user = Auth::user();
-                $token = $user->createToken('authToken')->plainTextToken;
-
-                return $this->successResponse([
-                    'user' => $user,
-                    'token' => $token,
-                ], 'Inicio de sesión exitoso');
+            if (!$token = Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+                return $this->errorResponse('Credenciales inválidas', 401);
             }
 
-            return $this->errorResponse('Credenciales inválidas', 401);
+            $user = Auth::user();
+
+            return $this->successResponse([
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => Auth::factory()->getTTL() * 60
+            ], 'Inicio de sesión exitoso');
 
         } catch (ValidationException $e) {
             return $this->errorResponse('Datos de inicio de sesión inválidos', 400, $e->errors());
@@ -83,18 +88,25 @@ class AuthController extends Controller
             return $this->errorResponse('Error al iniciar sesión', 500, ['error' => $e->getMessage()]);
         }
     }
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(Auth::user());
+    }
 
     /**
-     * Cierra la sesión del usuario autenticado.
+     * Log the user out (Invalidate the token).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
         try {
-            $request->user()->currentAccessToken()->delete();
-
+            Auth::logout();
             return $this->successResponse(null, 'Sesión cerrada exitosamente');
         } catch (\Exception $e) {
             return $this->errorResponse('Error al cerrar sesión', 500, ['error' => $e->getMessage()]);
@@ -102,20 +114,29 @@ class AuthController extends Controller
     }
 
     /**
-     * Recupera la información del usuario autenticado.
+     * Refresh a token.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function userInfo(Request $request)
+    public function refresh()
     {
-        try {
-            $user = $request->user();
+        return $this->respondWithToken(Auth::refresh());
+    }
 
-            return $this->successResponse($user->makeHidden(['contrasena']), 'Información del usuario');
-        } catch (\Exception $e) {
-            return $this->errorResponse('Error al obtener la información del usuario', 500, ['error' => $e->getMessage()]);
-        }
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::factory()->getTTL() * 60
+        ]);
     }
 
     /**

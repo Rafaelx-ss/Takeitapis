@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\App;
-use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
 
-class Usuario extends Authenticatable
+class Usuario extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * Nombre de la tabla asociada.
@@ -57,8 +57,8 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'nombreUsuario',
         'usuario',
-        'correoUsuario',
-        'contrasena',
+        'email',
+        'password',
         'rolUsuario',
         'telefonoUsuario',
         'fechaNacimientoUsuario',
@@ -73,7 +73,7 @@ class Usuario extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'contrasena',
+        'password',
         'remember_token',
     ];
 
@@ -88,7 +88,6 @@ class Usuario extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
     /**
      * Encripta automáticamente la contraseña antes de guardarla.
      *
@@ -97,7 +96,7 @@ class Usuario extends Authenticatable
      */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['contrasena'] = bcrypt($value);
+        $this->attributes['password'] = bcrypt($value);
     }
 
     /**
@@ -109,6 +108,28 @@ class Usuario extends Authenticatable
         return $this->hasMany(DireccionUsuario::class, 'usuarioID', 'usuarioID');
     }
 
+    public function getAuthPassword()
+    {
+        return $this->password; // Cambiado de contrasena a password
+    }
 
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
 
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
