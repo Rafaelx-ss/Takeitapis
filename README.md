@@ -54,34 +54,45 @@ El backend de **Take IT** se encarga de:
 Desarrollado con 💻 por:
 
 ---
-<br />
-<p align="left" style="display: flex; align-items: center; gap: 20px;">
-  <a href="https://github.com/Rafaelx-ss">
-    <img src="https://avatars.githubusercontent.com/u/147651823?v=4" width="75px" alt="Rafael Solis"/>
-    <br /><sub><b>Rafael Solis</b></sub>
-  </a>
-  <a href="https://github.com/KevDom0317">
-    <img src="https://avatars.githubusercontent.com/u/156467209?v=4" width="75px" alt="Kevin Padilla"/>
-    <br /><sub><b>Kevin Padilla</b></sub>
-  </a>
-  <a href="https://github.com/JosePK0">
-    <img src="https://avatars.githubusercontent.com/u/157852544?v=4" width="75px" alt="Jose Pol Ku"/>
-    <br /><sub><b>Jose Pol Ku</b></sub>
-  </a>
-  <a href="https://github.com/gogphojoh">
-    <img src="https://avatars.githubusercontent.com/u/149612930?v=4" width="75px" alt="Hector Mendoza"/>
-    <br /><sub><b>Hector Mendoza</b></sub>
-  </a>
-  <a href="https://github.com/Arielo16">
-    <img src="https://avatars.githubusercontent.com/u/108147166?v=4" width="75px" alt="Jose Ariel Martinez"/>
-    <br /><sub><b>Jose Ariel Martinez</b></sub>
-  </a>
-</p>
 
+<table style="border-collapse: collapse; width: 100%; text-align: center;">
+  <tr style="border: none;">
+    <td align="center" style="border: none;">
+      <a href="https://github.com/Rafaelx-ss">
+        <img src="https://avatars.githubusercontent.com/u/147651823?v=4" width="100px;" alt="Rafael Solis"/>
+        <br /><sub><b>Rafael Solis</b></sub>
+      </a>
+    </td>
+    <td align="center" style="border: none;">
+      <a href="https://github.com/KevDom0317">
+        <img src="https://avatars.githubusercontent.com/u/156467209?v=4" width="100px;" alt="Kevin Padilla"/>
+        <br /><sub><b>Kevin Padilla</b></sub>
+      </a>
+    </td>
+    <td align="center" style="border: none;">
+      <a href="https://github.com/JosePK0">
+        <img src="https://avatars.githubusercontent.com/u/157852544?v=4" width="100px;" alt="Jose Pol Ku"/>
+        <br /><sub><b>Jose Pol Ku</b></sub>
+      </a>
+    </td>
+    <td align="center" style="border: none;">
+      <a href="https://github.com/gogphojoh">
+        <img src="https://avatars.githubusercontent.com/u/149612930?v=4" width="100px;" alt="Hector Mendoza"/>
+        <br /><sub><b>Hector Mendoza</b></sub>
+      </a>
+    </td>
+    <td align="center" style="border: none;">
+      <a href="https://github.com/Arielo16">
+        <img src="https://avatars.githubusercontent.com/u/108147166?v=4" width="100px;" alt="Jose Ariel Martinez"/>
+        <br /><sub><b>Jose Ariel Martinez</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- MARKDOWN LINKS & IMAGES -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/Rafaelx-ss/Takeitapis?color=blueviolet&style=for-the-badge&logo=github
 [contributors-url]: https://github.com/Rafaelx-ss/Takeitapis/graphs/contributors
 
