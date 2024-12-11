@@ -1,5 +1,5 @@
 <?php
-//bootsraop/app.php
+// bootstrap/app.php
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,8 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Middlewares globales
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+        $exceptions->render(function (\Throwable $exception, $request) {
+            // Instanciamos el handler
+            $handler = new \App\Exceptions\Handler(app());
+
+            // Llamamos al método render del handler, que retorna siempre JSON
+            return $handler->render($request, $exception);
+        });
+    })
+    ->create();
