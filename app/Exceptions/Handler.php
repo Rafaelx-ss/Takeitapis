@@ -56,8 +56,4 @@ class Handler extends \Illuminate\Foundation\Exceptions\Handler
             'status' => 'error'
         ], $status);
     }
-    
-    
-
-    
 }
