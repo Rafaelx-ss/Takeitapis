@@ -24,7 +24,7 @@ class CreateUsuariosTable extends Migration
         });
 
         DB::table('usuarios')->insert([
-            ['nombreUsuario' => 'Administrador', 'usuario' => 'admin', 'email' => 'admin@gmail.com', 'password' => bcrypt('admin'), 'rolUsuario' => 'Organizador', 'telefonoUsuario' => '1234567890', 'fechaNacimientoUsuario' => '01/01/2000', 'generoUsuario' => 'MASCULINO', 'activoUsuario' => true, 'estadoUsuario' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['nombreUsuario' => 'Administrador', 'usuario' => 'admin', 'email' => 'admin@gmail.com', 'password' => bcrypt('admin123'), 'rolUsuario' => 'Organizador', 'telefonoUsuario' => '1234567890', 'fechaNacimientoUsuario' => '01/01/2000', 'generoUsuario' => 'MASCULINO', 'activoUsuario' => true, 'estadoUsuario' => true, 'created_at' => now(), 'updated_at' => now()],
             ['nombreUsuario' => 'Usuario', 'usuario' => 'usuario', 'email' => 'usuario@gmail.com', 'password' => bcrypt('usuario'), 'rolUsuario' => 'Participante', 'telefonoUsuario' => '1234567890', 'fechaNacimientoUsuario' => '01/01/1998', 'generoUsuario' => 'FEMENINO', 'activoUsuario' => true, 'estadoUsuario' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
