@@ -197,7 +197,7 @@ class EventoController extends Controller
         $query = Evento::query();
 
         $filters = [
-            'eventosID' => '=',
+            'eventoID' => '=',
             'patrocinadorID' => '=',
             'categoriaID' => '=',
             'subCategoriaID' => '=',

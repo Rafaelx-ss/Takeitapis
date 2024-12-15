@@ -10,7 +10,7 @@ class CreateEventosTable extends Migration
     public function up()
     {
         Schema::create('eventos', function (Blueprint $table) {
-            $table->bigIncrements('eventosID');
+            $table->bigIncrements('eventoID');
             $table->unsignedBigInteger('patrocinadorID');
             $table->unsignedBigInteger('categoriaID');
             $table->unsignedBigInteger('subCategoriaID');

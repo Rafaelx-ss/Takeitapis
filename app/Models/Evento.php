@@ -21,7 +21,7 @@ class Evento extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'eventosID';
+    protected $primaryKey = 'eventoID';
 
     /**
      * Indica si los identificadores son autoincrementales.
