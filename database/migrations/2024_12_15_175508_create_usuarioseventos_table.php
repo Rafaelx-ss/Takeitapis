@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -20,6 +21,11 @@ return new class extends Migration
             $table->foreign('usuarioID')->references('usuarioID')->on('usuarios')->onUpdate('restrict')->onDelete('cascade');
             $table->foreign('eventoID')->references('eventoID')->on('eventos')->onUpdate('restrict')->onDelete('cascade');
         });
+
+        DB::table('usuarioseventos')->insert([
+            ['usuarioID' => 1, 'eventoID' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['usuarioID' => 1, 'eventoID' => 2, 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     /**

@@ -84,4 +84,9 @@ class Evento extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(Usuario::class, 'usuarioseventos', 'eventoID', 'usuarioID');
+    }
 }
