@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Patrocinador;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PatrocinadorController extends Controller
 {
