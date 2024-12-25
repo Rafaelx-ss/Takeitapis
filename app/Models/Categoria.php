@@ -50,6 +50,7 @@ class Categoria extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'categoriaID',
         'nombreCategoria',
         'descripcionCategoria',
         'activoCategoria',
@@ -64,6 +65,7 @@ class Categoria extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'categoriaID' => 'int',
         'activoCategoria' => 'boolean',
         'estadoCategoria' => 'boolean',
         'created_at' => 'datetime',

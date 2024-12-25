@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evento;
-use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use App\Models\Subcategoria;
 class EventoController extends Controller
 {
     /**
@@ -30,6 +29,22 @@ class EventoController extends Controller
      */
     public function store(Request $request, $usuarioID)
     {
+        $nuevaSubcategoria = null;
+
+        if($request->input('subCategoriaID') == 0){
+            $nuevaSubcategoria = Subcategoria::create([
+                'categoriaID' => $request->input('categoriaID'),
+                'nombreSubcategoria' => $request->input('nuevaSubcategoria'), 
+                'descripcionSubcategoria' => "Esta categoría fué creada por un usuario",
+                'activoSubcategoria' => 1,
+                'estadoSubcategoria' => 1
+            ]);
+        }
+
+
+
+
+        
         $validatedData = $request->validate([
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
