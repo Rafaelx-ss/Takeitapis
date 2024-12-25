@@ -28,11 +28,9 @@ class EventoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $usuarioID)
     {
-        // Validaciones con reglas y mensajes personalizados
         $validatedData = $request->validate([
-            'patrocinadorID' => 'required|integer|exists:patrocinadores,patrocinadorID',
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
             'nombreEvento' => 'required|string|max:255',
@@ -50,8 +48,6 @@ class EventoController extends Controller
             'duracionEvento' => 'required|integer|min:1|max:48',
             'kitEvento' => 'required|string|max:255',
         ], [
-            'patrocinadorID.required' => 'El ID del patrocinador es obligatorio.',
-            'patrocinadorID.integer' => 'El ID del patrocinador debe ser un número entero.',
             'categoriaID.required' => 'La categoría es obligatoria.',
             'nombreEvento.required' => 'El nombre del evento es obligatorio.',
             'fechaEvento.after' => 'La fecha del evento debe ser posterior al día de hoy.',
@@ -65,12 +61,24 @@ class EventoController extends Controller
             // Crear el evento en la base de datos
             $evento = Evento::create($validatedData);
 
-            // Respuesta exitosa
-            return response()->json([
-                'success' => true,
-                'message' => 'Evento creado exitosamente.',
-                'data' => $evento,
-            ], 201);
+            if($evento){
+                // Agregar registro en la tabla pivote usuarioseventos
+                $evento->usuarios()->attach($usuarioID);
+                
+                // Respuesta exitosa
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento creado exitosamente.',
+                    'data' => $evento,
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se pudo crear el evento. Por favor verifique los datos e intente nuevamente.',
+                ], 422);
+            }
+
+
 
         } catch (\Exception $e) {
             // Manejo de errores
@@ -243,19 +251,25 @@ class EventoController extends Controller
 
     public function miseventos(Request $request, $usuarioID)
     {
-        $usuario = Usuario::find($usuarioID);
-    
-        if (!$usuario) {
-            return response()->json(['error' => 'Usuario no encontrado'], 404);
-        }
-    
         $page = $request->input('page', 1);
         $itemsPerPage = $request->input('itemsPerPage', 10);
-        $sortColumn = $request->input('sortColumn', 'eventoID'); 
+        $sortColumn = $request->input('sortColumn', 'eventos.eventoID'); 
         $sortDirection = $request->input('sortDirection', 'asc');
     
-        $query = $usuario->eventos();
-    
+        $query = Evento::join('usuarioseventos', 'eventos.eventoID', '=', 'usuarioseventos.eventoID')
+            ->where('usuarioseventos.usuarioID', $usuarioID)
+            ->select(
+                'eventos.eventoID',
+                'eventos.nombreEvento',
+                'eventos.fechaEvento',
+                'eventos.horaEvento', 
+                'eventos.lugarEvento',
+                'eventos.direccionEvento',
+                'eventos.costoEvento',
+                'eventos.maximoParticipantesEvento',
+                'eventos.activoEvento'
+            );
+
         if ($sortColumn) {
             $query->orderBy($sortColumn, $sortDirection);
         }

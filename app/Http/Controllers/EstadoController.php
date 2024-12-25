@@ -12,7 +12,7 @@ class EstadoController extends Controller
      */
     public function index()
     {
-        $estados = Estado::all();
+        $estados = Estado::select('estadoID', 'nombreEstado')->get();
         return response()->json($estados);
     }
     /**

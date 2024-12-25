@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use Illuminate\Http\Request;
-
+use App\Models\Subcategoria;
 class CategoriaController extends Controller
 {
     /**
@@ -14,6 +14,26 @@ class CategoriaController extends Controller
     {
         $categorias = Categoria::all();
         return response()->json($categorias);
+    }
+
+    public function form()
+    {
+        $categorias = Categoria::
+            select('categoriaID', 'nombreCategoria')
+            ->where('estadoCategoria', 1)
+            ->get();
+        return response()->json($categorias);
+    }
+
+    public function subcategoria($categoriaID)
+    {
+        $subcategorias = Subcategoria::
+            select('subcategoriaID', 'nombreSubcategoria')
+            ->where('categoriaID', $categoriaID)
+            ->where('estadoSubcategoria', 1)
+            ->get();
+
+        return response()->json($subcategorias);
     }
 
     /**

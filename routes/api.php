@@ -24,21 +24,16 @@ Route::group([
 
 
 Route::prefix('categorias')->group(function () {
-    Route::get('get/', [CategoriaController::class, 'index']);
-
+    Route::get('', [CategoriaController::class, 'index']);
+    Route::get('form', [CategoriaController::class, 'form']);
+    Route::get('subcategoria/{categoriaID}', [CategoriaController::class, 'subcategoria']);
     Route::get('get/{id}', [CategoriaController::class, 'show']);
-
     Route::post('post/', [CategoriaController::class, 'store']);
-
     Route::put('put/{id}', [CategoriaController::class, 'update']);
-
     Route::delete('delete/{id}', [CategoriaController::class, 'destroy']);
-
     Route::get('/filtrar', [CategoriaController::class, 'filter']);
-
     Route::patch('/{id}/toggle', [CategoriaController::class, 'toggle']);
 });
-
 
 
 Route::prefix('paises')->group(function () {
@@ -52,7 +47,7 @@ Route::prefix('paises')->group(function () {
 });
 
 Route::prefix('estados')->group(function () {
-    Route::get('get/', [EstadoController::class, 'index']);
+    Route::get('', [EstadoController::class, 'index']);
     Route::post('post/', [EstadoController::class, 'store']);
     Route::get('get/{id}', [EstadoController::class, 'show']);
     Route::put('put/{id}', [EstadoController::class, 'update']);
@@ -62,14 +57,15 @@ Route::prefix('estados')->group(function () {
 });
 
 Route::prefix('eventos')->group(function () {
+    Route::get('/miseventos/{usuarioID}', [EventoController::class, 'miseventos']);
+    Route::post('crear/{usuarioID}', [EventoController::class, 'store']);
+
     Route::get('get/', [EventoController::class, 'index']);
-    Route::post('post/', [EventoController::class, 'store']);
     Route::get('get/{id}', [EventoController::class, 'show']);
     Route::put('put/{id}', [EventoController::class, 'update']);
     Route::delete('delete/{id}', [EventoController::class, 'destroy']);
     Route::get('/filtrar', [EventoController::class, 'filter']);
     Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);
-    Route::get('/miseventos/{usuarioID}', [EventoController::class, 'miseventos']);
 });
 
 Route::prefix('patrocinadores')->group(function () {
