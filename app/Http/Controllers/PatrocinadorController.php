@@ -14,8 +14,17 @@ class PatrocinadorController extends Controller
      */
     public function index($usuarioID)
     {
-        //$usuarioID = $request->input('usuarioID');
         $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get();
+
+        foreach ($patrocinadores as $patrocinador) {
+            $imagePath = public_path('images/patrocinadores/' . $patrocinador->patrocinadorID . '.png');
+            if (file_exists($imagePath)) {
+                $patrocinador->image_url = asset('images/patrocinadores/' . $patrocinador->patrocinadorID . '.png');
+            } else {
+                $patrocinador->image_url = null;
+            }
+        }
+
         return response()->json($patrocinadores);
     }
 
