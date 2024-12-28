@@ -17,11 +17,11 @@ class PatrocinadorController extends Controller
         $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get();
 
         foreach ($patrocinadores as $patrocinador) {
-            $imagePath = public_path('images/patrocinadores/' . $patrocinador->patrocinadorID . '.png');
-            if (file_exists($imagePath)) {
-                $patrocinador->image_url = asset('images/patrocinadores/' . $patrocinador->patrocinadorID . '.png');
+            $imagePath = public_path('images/patrocinadores/' . $patrocinador->fotoPatrocinador);
+            if (file_exists($imagePath) && $patrocinador->fotoPatrocinador) {
+                $patrocinador->image_url = asset('images/patrocinadores/' . $patrocinador->fotoPatrocinador);
             } else {
-                $patrocinador->image_url = null;
+                $patrocinador->image_url = asset('images/patrocinadores/default-logo.png');
             }
         }
 
