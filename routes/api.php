@@ -69,13 +69,13 @@ Route::prefix('eventos')->group(function () {
 });
 
 Route::prefix('patrocinadores')->group(function () {
-    Route::get('get/', [PatrocinadorController::class, 'index']);
+    Route::get('{usuarioID}', [PatrocinadorController::class, 'index']);
     Route::post('post/', [PatrocinadorController::class, 'store']);
     Route::get('get/{id}', [PatrocinadorController::class, 'show']);
     Route::put('put/{id}', [PatrocinadorController::class, 'update']);
     Route::delete('delete/{id}', [PatrocinadorController::class, 'destroy']);
     Route::get('/filtrar', [PatrocinadorController::class, 'filter']);
-    Route::patch('/{id}/toggle', [PatrocinadorController::class, 'toggle']);
+    Route::patch('/{i}/toggle', [PatrocinadorController::class, 'toggle']);
 });
 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);

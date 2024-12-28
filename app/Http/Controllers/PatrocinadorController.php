@@ -12,11 +12,11 @@ class PatrocinadorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($usuarioID)
     {
-        //
-        $patrocinador = Patrocinador::all();
-        return response()->json($patrocinador);
+        //$usuarioID = $request->input('usuarioID');
+        $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get();
+        return response()->json($patrocinadores);
     }
 
     /**
