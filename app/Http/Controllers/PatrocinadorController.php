@@ -14,12 +14,12 @@ class PatrocinadorController extends Controller
      */
     public function index($usuarioID)
     {
-        $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get();
+        $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get(['patrocinadorID', 'fotoPatrocinador', 'nombrePatrocinador', 'representantePatrocinador', 'activoPatrocinador', 'estadoPatrocinador']);
 
         foreach ($patrocinadores as $patrocinador) {
-            $imagePath = public_path('images/patrocinadores/' . $patrocinador->fotoPatrocinador);
+            $imagePath = public_path($patrocinador->fotoPatrocinador);
             if (file_exists($imagePath) && $patrocinador->fotoPatrocinador) {
-                $patrocinador->image_url = asset('images/patrocinadores/' . $patrocinador->fotoPatrocinador);
+                $patrocinador->image_url = asset($patrocinador->fotoPatrocinador);
             } else {
                 $patrocinador->image_url = asset('images/patrocinadores/default-logo.png');
             }
