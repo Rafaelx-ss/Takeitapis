@@ -12,7 +12,7 @@ class CreatePatrocinadoresTable extends Migration
         Schema::create('patrocinadores', function (Blueprint $table) {
             $table->bigIncrements('patrocinadorID');
             $table->unsignedBigInteger('usuarioID');
-            $table->binary('fotoPatrocinador')->nullable();
+            $table->string('fotoPatrocinador', 255)->nullable();
             $table->string('nombrePatrocinador', 255);
             $table->string('representantePatrocinador', 255);
             $table->string('rfcPatrocinador', 255);
