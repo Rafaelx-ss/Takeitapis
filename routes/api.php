@@ -70,10 +70,11 @@ Route::prefix('eventos')->group(function () {
 
 Route::prefix('patrocinadores')->group(function () {
     Route::get('{usuarioID}', [PatrocinadorController::class, 'index']);
+    Route::delete('delete/{id}', [PatrocinadorController::class, 'destroy']);
+    
     Route::post('post/', [PatrocinadorController::class, 'store']);
     Route::get('get/{id}', [PatrocinadorController::class, 'show']);
     Route::put('put/{id}', [PatrocinadorController::class, 'update']);
-    Route::delete('delete/{id}', [PatrocinadorController::class, 'destroy']);
     Route::get('/filtrar', [PatrocinadorController::class, 'filter']);
     Route::patch('/{i}/toggle', [PatrocinadorController::class, 'toggle']);
 });

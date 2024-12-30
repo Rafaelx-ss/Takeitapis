@@ -16,7 +16,11 @@ class PatrocinadorController extends Controller
     {
         $patrocinadores = Patrocinador::where('usuarioID', $usuarioID)->get(['patrocinadorID', 'fotoPatrocinador', 'nombrePatrocinador', 'representantePatrocinador', 'activoPatrocinador', 'estadoPatrocinador']);
 
-        foreach ($patrocinadores as $patrocinador) {
+        $filteredPatrocinadores = $patrocinadores->filter(function ($patrocinador) {
+            return $patrocinador->estadoPatrocinador !== false;
+        });
+
+        foreach ($filteredPatrocinadores as $patrocinador) {
             $imagePath = public_path($patrocinador->fotoPatrocinador);
             if (file_exists($imagePath) && $patrocinador->fotoPatrocinador) {
                 $patrocinador->image_url = asset($patrocinador->fotoPatrocinador);
@@ -25,9 +29,32 @@ class PatrocinadorController extends Controller
             }
         }
 
-        return response()->json($patrocinadores);
+        return response()->json([
+            'totalPatrocinadores' => $filteredPatrocinadores->count(),
+            'data' => $filteredPatrocinadores
+        ]);
     }
 
+        /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        // 
+        $patrocinador = Patrocinador::find($id);
+
+        if (!$patrocinador) {
+            return response()->json(['error' => 'Patrocinador no encontrada'], 404);
+        }
+
+        $patrocinador->estadoPatrocinador= 0;
+        $patrocinador->save();
+
+        return response()->json(['message' => 'Patrocinador eliminada exitosamente']);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
     /**
      * Show the form for creating a new resource.
      */
@@ -176,24 +203,6 @@ class PatrocinadorController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        // 
-        $patrocinador = Patrocinador::find($id);
-
-        if (!$patrocinador) {
-            return response()->json(['error' => 'Patrocinador no encontrada'], 404);
-        }
-
-        $patrocinador->estadoPatrocinador= 0;
-        $patrocinador->save();
-
-        return response()->json(['message' => 'Patrocinador eliminada exitosamente']);
     }
 
     public function filter(Request $request)
