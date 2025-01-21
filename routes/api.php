@@ -57,10 +57,10 @@ Route::prefix('estados')->group(function () {
 });
 
 Route::prefix('eventos')->group(function () {
+    
     Route::get('/miseventos/{usuarioID}', [EventoController::class, 'miseventos']);
     Route::post('crear/{usuarioID}', [EventoController::class, 'store']);
-
-    Route::get('get/', [EventoController::class, 'index']);
+    Route::get('page/', [EventoController::class, 'page']);
     Route::get('get/{id}', [EventoController::class, 'show']);
     Route::put('put/{id}', [EventoController::class, 'update']);
     Route::delete('delete/{id}', [EventoController::class, 'destroy']);

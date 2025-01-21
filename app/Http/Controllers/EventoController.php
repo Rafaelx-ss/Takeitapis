@@ -14,8 +14,19 @@ class EventoController extends Controller
     public function index()
     {
         $eventos = Evento::all();
+        return response()->json($eventos);        
+    }   
+
+    public function page(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $perPage = 10; 
+
+        $eventos = Evento::paginate($perPage);
+        
         return response()->json($eventos);
     }
+    /**
     /**
      * Show the form for creating a new resource.
      */
