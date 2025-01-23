@@ -14,6 +14,16 @@ class UsuarioController extends Controller
         //
     }
 
+    public function page(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $perPage = 10; 
+
+        $usuarios = Usuario::select('usuarioID', 'nombreUsuario', 'email', 'rolUsuario')->paginate($perPage);
+        
+        return response()->json($usuarios);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

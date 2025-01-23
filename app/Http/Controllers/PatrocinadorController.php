@@ -35,6 +35,16 @@ class PatrocinadorController extends Controller
         ]);
     }
 
+    public function page(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $perPage = 10; 
+
+        $patrocinadores = Patrocinador::select('patrocinadorID', 'nombrePatrocinador', 'correoPatrocinador', 'rfcPatrocinador')->paginate($perPage);
+        
+        return response()->json($patrocinadores);
+    }
+
         /**
      * Remove the specified resource from storage.
      */

@@ -22,7 +22,7 @@ class EventoController extends Controller
         $page = $request->input('page', 1);
         $perPage = 10; 
 
-        $eventos = Evento::paginate($perPage);
+        $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->paginate($perPage);
         
         return response()->json($eventos);
     }

@@ -1,4 +1,6 @@
 <?php
+
+use app\controllers\UsuariosController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     AuthController,
@@ -8,6 +10,7 @@ use App\Http\Controllers\{
     EstadoController,
     EventoController,
     PatrocinadorController,
+    UsuarioController
 };
 
 Route::group([
@@ -21,6 +24,7 @@ Route::group([
     Route::post('register', [AuthController::class, 'register']);
 });
 
+Route::get('users/page/', [UsuarioController::class, 'page']);
 
 
 Route::prefix('categorias')->group(function () {
@@ -69,9 +73,9 @@ Route::prefix('eventos')->group(function () {
 });
 
 Route::prefix('patrocinadores')->group(function () {
-    Route::get('{usuarioID}', [PatrocinadorController::class, 'index']);
+    Route::get('mispatrocinadores/{usuarioID}', [PatrocinadorController::class, 'index']);
     Route::delete('delete/{id}', [PatrocinadorController::class, 'destroy']);
-    
+    Route::get('page/', [PatrocinadorController::class, 'page']);
     Route::post('post/', [PatrocinadorController::class, 'store']);
     Route::get('get/{id}', [PatrocinadorController::class, 'show']);
     Route::put('put/{id}', [PatrocinadorController::class, 'update']);
