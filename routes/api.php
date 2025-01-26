@@ -66,7 +66,7 @@ Route::prefix('eventos')->group(function () {
     Route::post('crear/{usuarioID}', [EventoController::class, 'store']);
     Route::get('page/', [EventoController::class, 'page']);
     Route::get('get/{id}', [EventoController::class, 'show']);
-    Route::put('put/{id}', [EventoController::class, 'update']);
+    Route::put('actualizar/{id}', [EventoController::class, 'update']);
     Route::delete('delete/{id}', [EventoController::class, 'destroy']);
     Route::get('/filtrar', [EventoController::class, 'filter']);
     Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);

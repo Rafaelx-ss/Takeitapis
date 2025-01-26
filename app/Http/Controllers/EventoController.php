@@ -6,6 +6,7 @@ use App\Models\Evento;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Subcategoria;
+use Illuminate\Support\Facades\Log;
 class EventoController extends Controller
 {
     /**
@@ -14,6 +15,8 @@ class EventoController extends Controller
     public function index()
     {
         $eventos = Evento::all();
+
+        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
         return response()->json($eventos);        
     }   
 
@@ -23,7 +26,8 @@ class EventoController extends Controller
         $perPage = 10; 
 
         $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->paginate($perPage);
-        
+
+        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
         return response()->json($eventos);
     }
     /**
@@ -52,10 +56,6 @@ class EventoController extends Controller
             ]);
         }
 
-
-
-
-        
         $validatedData = $request->validate([
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
@@ -84,36 +84,35 @@ class EventoController extends Controller
         ]);
 
         try {
-            // Crear el evento en la base de datos
             $evento = Evento::create($validatedData);
-
             if($evento){
-                // Agregar registro en la tabla pivote usuarioseventos
                 $evento->usuarios()->attach($usuarioID);
-                
-                // Respuesta exitosa
-                return response()->json([
+                $response = [
                     'success' => true,
                     'message' => 'Evento creado exitosamente.',
                     'data' => $evento,
-                ], 201);
+                ];
+                error_log(json_encode($response, JSON_PRETTY_PRINT));
+                return response()->json($response, 200);
             } else {
-                return response()->json([
+                $response = [
                     'success' => false,
                     'message' => 'No se pudo crear el evento. Por favor verifique los datos e intente nuevamente.',
-                ], 422);
+                ];
+                error_log(json_encode($response, JSON_PRETTY_PRINT));
+                return response()->json($response, 422);
             }
-
-
-
         } catch (\Exception $e) {
-            // Manejo de errores
-            return response()->json([
+            $response = [
                 'success' => false,
                 'message' => 'Ocurrió un error al crear el evento. Por favor, inténtalo de nuevo.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ];
+
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 500);
         }
+        
     }
 
 
@@ -129,6 +128,8 @@ class EventoController extends Controller
             return response()->json(['error' => 'Evento no encontrada'], 404);
         }
 
+        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
+
         return response()->json($eventos);
     }
 
@@ -143,17 +144,19 @@ class EventoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,  $evento)
+    public function update(Request $request,  $eventoID)
     {
+
         //
-        $eventos = Evento::find($evento);
+        $eventos = Evento::find($eventoID);
 
         if (!$eventos) {
             return response()->json(['error' => 'Eventos no encontrada'], 404);
         }
 
+
+
         $validatedData = $request->validate([
-            'patrocinadorID' => 'required|integer|exists:patrocinadores,patrocinadorID',
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
             'nombreEvento' => 'required|string|max:255',
@@ -171,8 +174,6 @@ class EventoController extends Controller
             'duracionEvento' => 'required|integer|min:1|max:48',
             'kitEvento' => 'required|string|max:255',
         ], [
-            'patrocinadorID.required' => 'El ID del patrocinador es obligatorio.',
-            'patrocinadorID.integer' => 'El ID del patrocinador debe ser un número entero.',
             'categoriaID.required' => 'La categoría es obligatoria.',
             'nombreEvento.required' => 'El nombre del evento es obligatorio.',
             'fechaEvento.after' => 'La fecha del evento debe ser posterior al día de hoy.',
@@ -182,27 +183,32 @@ class EventoController extends Controller
             'duracionEvento.max' => 'La duración máxima del evento es de 48 horas.',
         ]);
 
+
+
         try {
-        
             $eventos->update($validatedData);
-            return response()->json([
+            $response = [
                 'success' => true,
                 'message' => 'Evento actualizado exitosamente.',
                 'data' => $eventos,
-            ], 200);
+            ];
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 200);
         } catch (ModelNotFoundException $e) {
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'El evento con el ID especificado no se encontró.',
-            ], 404);
+            $response = [
+            'success' => false,
+            'message' => 'El evento con el ID especificado no se encontró.',
+            ];
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 404);
         } catch (\Exception $e) {
-            
-            return response()->json([
+            $response = [
                 'success' => false,
                 'message' => 'Ocurrió un error al actualizar el evento. Por favor, inténtalo de nuevo.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ];
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 500);
         }
     }
 
