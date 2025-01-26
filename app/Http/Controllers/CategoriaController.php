@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\Subcategoria;
+
 class CategoriaController extends Controller
 {
     /**
@@ -22,6 +23,9 @@ class CategoriaController extends Controller
             select('categoriaID', 'nombreCategoria')
             ->where('estadoCategoria', 1)
             ->get();
+
+
+        error_log(json_encode($categorias, JSON_PRETTY_PRINT));
         return response()->json($categorias);
     }
 
@@ -33,6 +37,7 @@ class CategoriaController extends Controller
             ->where('estadoSubcategoria', 1)
             ->get();
 
+        error_log(json_encode($subcategorias, JSON_PRETTY_PRINT));
         return response()->json($subcategorias);
     }
 
@@ -47,9 +52,11 @@ class CategoriaController extends Controller
         $categoria = Categoria::find($id);
 
         if (!$categoria) {
+            error_log(response()->json(['error' => 'Categoría no encontrada'], 404));
             return response()->json(['error' => 'Categoría no encontrada'], 404);
         }
 
+        error_log(json_encode($categoria, JSON_PRETTY_PRINT));
         return response()->json($categoria);
     }
 

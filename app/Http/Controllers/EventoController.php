@@ -25,7 +25,7 @@ class EventoController extends Controller
         $page = $request->input('page', 1);
         $perPage = 10; 
 
-        $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->paginate($perPage);
+        $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->where('estadoEvento', 1)->paginate($perPage);
 
         error_log(json_encode($eventos, JSON_PRETTY_PRINT));
         return response()->json($eventos);
@@ -215,18 +215,20 @@ class EventoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($evento)
+    public function destroy($eventoID)
     {
         //
-        $evento = Evento::find($evento);
+        $evento = Evento::find($eventoID);
 
         if (!$evento) {
+            error_log(response()->json(['error' => 'Eventos no encontrada'], 404));
             return response()->json(['error' => 'Eventos no encontrada'], 404);
         }
 
         $evento->estadoEvento = 0;
         $evento->save();
 
+        error_log(response()->json(['message' => 'Eventos eliminada exitosamente']));
         return response()->json(['message' => 'Eventos eliminada exitosamente']);
     }
 
