@@ -25,6 +25,9 @@ Route::group([
 });
 
 Route::get('users/page/', [UsuarioController::class, 'page']);
+Route::post('users/update/{usuarioID}', [UsuarioController::class, 'update']);
+Route::delete('users/delete/{usuarioID}', [UsuarioController::class, 'destroy']);
+Route::get('users/get/{usuarioID}', [UsuarioController::class, 'show']);
 
 
 Route::prefix('categorias')->group(function () {

@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
@@ -24,6 +27,37 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
+    public function update(Request $request, $usuarioID)
+    {
+        try {
+            $validatedData = $request->validate([
+                'nombreUsuario' => 'required|string|min:2|max:100',
+                'usuario' => 'required|string|min:4|max:50',
+                'email' => 'required|email|max:150',
+                'password' => 'required|string|min:6|max:100',
+                'telefonoUsuario' => 'nullable|string|min:8|max:15',
+                'fechaNacimientoUsuario' => 'nullable|date',
+                'generoUsuario' => 'nullable|in:MASCULINO,FEMENINO,OTRO',
+                'rolUsuario' => 'required|in:participante,organizador',
+            ]);
+
+            $user = Usuario::find($usuarioID);
+            if (!$user) {
+                return response()->json(["message" => "Usuario no encontrado"], 404);
+            }
+
+            $user->update($validatedData);
+
+            return response()->json("Usuario editado exitosamente", 200);
+
+        } catch (ValidationException $e) {
+            return response()->json(["message" => "Datos de registro inválidos", "error" => $e->errors()], 400);
+        } catch (\Exception $e) {
+            return response()->json(["message" => "Error al editar el usuario", "error" => $e->getMessage()], 500);
+        }
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -43,9 +77,12 @@ class UsuarioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Usuario $usuario)
+    public function show($usuarioID)
     {
-        //
+        $usuario = Usuario::select('*')
+                        ->find($usuarioID);
+
+        return response()->json($usuario);
     }
 
     /**
@@ -59,17 +96,16 @@ class UsuarioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Usuario $usuario)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Usuario $usuario)
+    public function destroy($usuarioID)
     {
-        //
+        $usuario = Usuario::find($usuarioID);
+        $usuario->estadoUsuario = 0;
+        $usuario->save();
+        return response()->json("Usuario eliminado exitosamente", 200);
     }
 }
 
