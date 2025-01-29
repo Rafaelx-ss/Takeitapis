@@ -22,6 +22,7 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
     Route::post('register', [AuthController::class, 'register']);
+    Route::post('verificarcuenta', [AuthController::class, 'verificarcuenta']);
 });
 
 Route::get('users/page/', [UsuarioController::class, 'page']);
