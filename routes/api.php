@@ -65,7 +65,7 @@ Route::prefix('estados')->group(function () {
 });
 
 Route::prefix('eventos')->group(function () {
-    
+    Route::get('eventosstarting/', [EventoController::class, 'eventosstarting']);
     Route::get('/miseventos/{usuarioID}', [EventoController::class, 'miseventos']);
     Route::post('crear/{usuarioID}', [EventoController::class, 'store']);
     Route::get('page/', [EventoController::class, 'page']);

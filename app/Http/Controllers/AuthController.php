@@ -64,31 +64,70 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            // Validar las credenciales
             $credentials = $request->validate([
                 'email' => 'required|string|email',
                 'password' => 'required|string',
             ]);
-
+    
+            error_log('Intento de inicio de sesión con email: ' . $credentials['email']);
+    
+            // Intentar autenticar al usuario
             if (!$token = Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-                return $this->errorResponse('Credenciales inválidas', 401);
+                $response = [
+                    'success' => false,
+                    'message' => 'Credenciales inválidas',
+                ];
+    
+                error_log(json_encode($response, JSON_PRETTY_PRINT));
+                return response()->json($response, 401);
             }
-
+    
+            // Obtener el usuario autenticado
             $user = Auth::user();
-            
-            $user->remember_token = $token;
-            $user->save();
-
-            return $this->successResponse([
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => Auth::factory()->getTTL() * 60
-            ], 'Inicio de sesión exitoso');
-
+            error_log('Usuario autenticado: ' . $user->email);
+    
+            // Guardar el token en el usuario si es una instancia de Usuario
+            if ($user instanceof Usuario) {
+                $user->remember_token = $token;
+                $user->save();
+                error_log('Token guardado para el usuario: ' . $user->email);
+            }
+    
+            // Devolver una respuesta exitosa
+            $response = [
+                'success' => true,
+                'message' => 'Inicio de sesión exitoso',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => Auth::factory()->getTTL() * 60,
+                ],
+            ];
+    
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 200);
+    
         } catch (ValidationException $e) {
-            return $this->errorResponse('Datos de inicio de sesión inválidos', 400, $e->errors());
+            $response = [
+                'success' => false,
+                'message' => 'Datos de inicio de sesión inválidos',
+                'errors' => $e->errors(),
+            ];
+    
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 400);
+    
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al iniciar sesión', 500, ['error' => $e->getMessage()]);
+            $response = [
+                'success' => false,
+                'message' => 'Error al iniciar sesión',
+                'errors' => ['error' => $e->getMessage()],
+            ];
+    
+            error_log(json_encode($response, JSON_PRETTY_PRINT));
+            return response()->json($response, 500);
         }
     }
     /**
