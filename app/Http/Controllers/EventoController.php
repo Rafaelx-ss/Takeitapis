@@ -321,6 +321,7 @@ class EventoController extends Controller
         $eventos = Evento::where('fechaEvento', '>', date('Y-m-d'))
             ->where('fechaEvento', '<=', date('Y-m-d', strtotime('+5 days')))
             ->where('estadoEvento', 1)
+            ->where('tipo_creador', 'O')
             ->select('eventoID', 'nombreEvento', 'fechaEvento')
             ->orderBy('fechaEvento', 'asc')
             ->limit(5)
