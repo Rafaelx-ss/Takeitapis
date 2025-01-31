@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\Subcategoria;
+use App\Helpers\ResponseHelper;
 
 class CategoriaController extends Controller
 {
@@ -14,7 +15,8 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = Categoria::all();
-        return response()->json($categorias);
+        return ResponseHelper::success('Lista de categorias exitosamente', $categorias);
+
     }
 
     public function form()
@@ -25,8 +27,7 @@ class CategoriaController extends Controller
             ->get();
 
 
-        error_log(json_encode($categorias, JSON_PRETTY_PRINT));
-        return response()->json($categorias);
+        return ResponseHelper::success('Lista de categorias activas exitosamente.', $categorias);
     }
 
     public function subcategoria($categoriaID)
@@ -37,8 +38,8 @@ class CategoriaController extends Controller
             ->where('estadoSubcategoria', 1)
             ->get();
 
-        error_log(json_encode($subcategorias, JSON_PRETTY_PRINT));
-        return response()->json($subcategorias);
+
+        return ResponseHelper::success('Lista de subcategorias de categoriaID = '.$categoriaID .' exitosamente.', $subcategorias);
     }
 
     /**
@@ -52,12 +53,9 @@ class CategoriaController extends Controller
         $categoria = Categoria::find($id);
 
         if (!$categoria) {
-            error_log(response()->json(['error' => 'Categoría no encontrada'], 404));
-            return response()->json(['error' => 'Categoría no encontrada'], 404);
+            return ResponseHelper::error('Categoría no encontrada', [], 404);
         }
-
-        error_log(json_encode($categoria, JSON_PRETTY_PRINT));
-        return response()->json($categoria);
+        return ResponseHelper::success('Lista de Categoría de categoriaID = '.$id .' exitosamente.', $categoria);
     }
 
     /**
@@ -75,7 +73,7 @@ class CategoriaController extends Controller
 
         $categoria = Categoria::create($validatedData);
 
-        return response()->json($categoria, 201);
+        return ResponseHelper::success('Categoria creada exitosamente.', $categoria);
     }
 
     /**
@@ -100,7 +98,7 @@ class CategoriaController extends Controller
 
         $categoria->update($validatedData);
 
-        return response()->json($categoria);
+        return ResponseHelper::success('Categoria actualizada exitosamente.', $categoria);  
     }
 
     /**
@@ -114,13 +112,13 @@ class CategoriaController extends Controller
         $categoria = Categoria::find($id);
 
         if (!$categoria) {
-            return response()->json(['error' => 'Categoría no encontrada'], 404);
+            return ResponseHelper::error('Categoría no encontrada categoriaID = '.$id, [], 404);
         }
 
         $categoria->estadoCategoria = 0;
         $categoria->save();
 
-        return response()->json(['message' => 'Categoría eliminada exitosamente']);
+        return ResponseHelper::success('Categoria eliminada exitosamente.', $categoria);
     }
 
     /**
@@ -145,12 +143,12 @@ class CategoriaController extends Controller
 
         foreach ($filters as $field => $operator) {
             if ($request->has($field)) {
-            $value = $request->input($field);
-            $query->where($field, $operator, $operator === 'like' ? "%$value%" : $value);
+                $value = $request->input($field);
+                $query->where($field, $operator, $operator === 'like' ? "%$value%" : $value);
             }
         }
 
-        return response()->json($query->get());
+        return ResponseHelper::success('Categoria encontrada.', $query->get());
     }
 
     /**
@@ -164,11 +162,13 @@ class CategoriaController extends Controller
         $categoria = Categoria::find($id);
 
         if (!$categoria) {
-            return response()->json(['error' => 'Categoría no encontrada'], 404);
+            return ResponseHelper::error('Categoría no encontrada', [], 404);
+
         }
         $categoria->activoCategoria = !$categoria->activoCategoria;
         $categoria->save();
 
-        return response()->json(['susccess' => 'Categoría actualizada exitosamente']);
+        return ResponseHelper::success('Categoría actualizado exitosamente');
+
     }
 }
