@@ -6,7 +6,8 @@ use App\Models\Evento;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Subcategoria;
-use Illuminate\Support\Facades\Log;
+use App\Helpers\ResponseHelper;
+
 class EventoController extends Controller
 {
     /**
@@ -15,10 +16,8 @@ class EventoController extends Controller
     public function index()
     {
         $eventos = Evento::all();
-
-        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
-        return response()->json($eventos);        
-    }   
+        return ResponseHelper::success('Lista de eventos obtenida exitosamente', $eventos);
+    }
 
     public function page(Request $request)
     {
@@ -27,9 +26,9 @@ class EventoController extends Controller
 
         $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->where('estadoEvento', 1)->paginate($perPage);
 
-        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
-        return response()->json($eventos);
+        return ResponseHelper::success('Eventos paginados obtenidos exitosamente', $eventos);
     }
+    
     /**
     /**
      * Show the form for creating a new resource.
@@ -87,13 +86,7 @@ class EventoController extends Controller
             $evento = Evento::create($validatedData);
             if($evento){
                 $evento->usuarios()->attach($usuarioID);
-                $response = [
-                    'success' => true,
-                    'message' => 'Evento creado exitosamente.',
-                    'data' => $evento,
-                ];
-                error_log(json_encode($response, JSON_PRETTY_PRINT));
-                return response()->json($response, 200);
+                return ResponseHelper::success('Evento creado exitosamente', $evento, 201);
             } else {
                 $response = [
                     'success' => false,
@@ -103,34 +96,22 @@ class EventoController extends Controller
                 return response()->json($response, 422);
             }
         } catch (\Exception $e) {
-            $response = [
-                'success' => false,
-                'message' => 'Ocurrió un error al crear el evento. Por favor, inténtalo de nuevo.',
-                'error' => $e->getMessage(),
-            ];
-
-            error_log(json_encode($response, JSON_PRETTY_PRINT));
-            return response()->json($response, 500);
+            return ResponseHelper::error('Ocurrió un error al crear el evento', ['error' => $e->getMessage()], 500);
         }
-        
     }
-
 
     /**
      * Display the specified resource.
      */
-    public function show($evento)
+    public function show($eventoID)
     {
-        //
-        $eventos = Evento::find($evento);
-
-        if (!$eventos) {
-            return response()->json(['error' => 'Evento no encontrada'], 404);
+        $evento = Evento::find($eventoID);
+    
+        if (!$evento) {
+            return ResponseHelper::error('Evento no encontrado', [], 404);
         }
-
-        error_log(json_encode($eventos, JSON_PRETTY_PRINT));
-
-        return response()->json($eventos);
+    
+        return ResponseHelper::success('Evento obtenido exitosamente', $evento);
     }
 
     /**
@@ -217,20 +198,18 @@ class EventoController extends Controller
      */
     public function destroy($eventoID)
     {
-        //
         $evento = Evento::find($eventoID);
-
+    
         if (!$evento) {
-            error_log(response()->json(['error' => 'Eventos no encontrada'], 404));
-            return response()->json(['error' => 'Eventos no encontrada'], 404);
+            return ResponseHelper::error('Evento no encontrado', [], 404);
         }
-
+    
         $evento->estadoEvento = 0;
         $evento->save();
-
-        error_log(response()->json(['message' => 'Eventos eliminada exitosamente']));
-        return response()->json(['message' => 'Eventos eliminada exitosamente']);
+    
+        return ResponseHelper::success('Evento eliminado exitosamente', null);
     }
+    
 
     public function filter(Request $request)
     {
@@ -267,20 +246,20 @@ class EventoController extends Controller
             }
         }
 
-        return response()->json($query->get());
+        return ResponseHelper::success('Eventos filtrados obtenidos exitosamente', $query->get());
     }
 
     public function toggle($id)
     {
-        $eventos = Evento::find($id);
+        $evento = Evento::find($id);
 
-        if (!$eventos) {
-            return response()->json(['error' => 'Evento no encontrada'], 404);
+        if (!$evento) {
+            return ResponseHelper::error('Evento no encontrado', [], 404);
         }
-        $eventos->activoEvento = !$eventos->activoEvento;
-        $eventos->save();
+        $evento->activoEvento = !$evento->activoEvento;
+        $evento->save();
 
-        return response()->json(['susccess' => 'Evento actualizada exitosamente']);
+        return ResponseHelper::success('ActivoEvento evento actualizado exitosamente', $evento);
     }
 
     public function miseventos(Request $request, $usuarioID)
@@ -333,7 +312,6 @@ class EventoController extends Controller
             'data' => $eventos,
         ];
 
-        error_log(json_encode($response, JSON_PRETTY_PRINT));
-        return response()->json($response, 200);
+        return ResponseHelper::success('Eventos próximos a iniciar obtenidos exitosamente', $eventos);
     }
 }
