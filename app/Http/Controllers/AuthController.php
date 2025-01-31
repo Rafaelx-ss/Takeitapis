@@ -205,4 +205,37 @@ class AuthController extends Controller
         ]);
     }
 
+    public function verificarcuenta(Request $request)
+    {
+
+        $request->validate([
+            'nombreUsuario' => 'required|string',
+            'email' => 'required|email',
+        ]);
+
+    
+        $nombreUsuario = $request->input('nombreUsuario');
+        $email = $request->input('email');
+
+        $existeNombreUsuario = Usuario::where('nombreUsuario', $nombreUsuario)->exists();
+
+        $existeEmail = Usuario::where('email', $email)->exists();
+
+
+        if ($existeNombreUsuario || $existeEmail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El nombre de usuario o el correo electrónico ya están registrados.',
+                'errors' => [
+                    'nombreUsuario' => $existeNombreUsuario ? 'El nombre de usuario ya está en uso.' : null,
+                    'email' => $existeEmail ? 'El correo electrónico ya está en uso.' : null,
+                ]
+            ], 200);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'El nombre de usuario y el correo electrónico están disponibles.',
+        ]);
+    }
 }
