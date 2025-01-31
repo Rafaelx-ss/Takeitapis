@@ -40,7 +40,9 @@ class PatrocinadorController extends Controller
         $page = $request->input('page', 1);
         $perPage = 10; 
 
-        $patrocinadores = Patrocinador::select('patrocinadorID', 'nombrePatrocinador', 'correoPatrocinador', 'rfcPatrocinador')->paginate($perPage);
+        $patrocinadores = Patrocinador::select('patrocinadorID', 'nombrePatrocinador', 'correoPatrocinador', 'rfcPatrocinador')
+        ->where('estadoPatrocinador',  1)
+        ->paginate($perPage);
         
         return response()->json($patrocinadores);
     }
@@ -81,6 +83,7 @@ class PatrocinadorController extends Controller
         try {
             
             $validatedData = $request->validate([
+                'usuarioID' => 'required|integer',
                 'fotoPatrocinador' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 'nombrePatrocinador' => 'required|string|max:255',
                 'representantePatrocinador' => 'required|string|max:255',
@@ -166,7 +169,8 @@ class PatrocinadorController extends Controller
                 'fotoPatrocinador' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 'nombrePatrocinador' => 'required|string|max:255',
                 'representantePatrocinador' => 'required|string|max:255',
-                'rfcPatrocinador' => 'required|string|size:13|regex:/^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{3}$/',
+                'rfcPatrocinador' => 'required|string|size:13|
+                $/',
                 'correoPatrocinador' => 'required|string|email|max:255',
                 'telefonoPatrocinador' => 'required|string|regex:/^\d{10}$/',
                 'numeroRepresentantePatrocinador' => 'required|string|max:255',

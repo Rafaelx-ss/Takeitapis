@@ -50,6 +50,7 @@ class Patrocinador extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'usuarioID',
         'fotoPatrocinador',
         'nombrePatrocinador',
         'representantePatrocinador',
