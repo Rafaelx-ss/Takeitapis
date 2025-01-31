@@ -315,4 +315,25 @@ class EventoController extends Controller
             'totalItems' => $eventos->total()
         ]);
     }
+
+    public function eventosstarting()
+    {
+        $eventos = Evento::where('fechaEvento', '>', date('Y-m-d'))
+            ->where('fechaEvento', '<=', date('Y-m-d', strtotime('+5 days')))
+            ->where('estadoEvento', 1)
+            ->where('tipo_creador', 'O')
+            ->select('eventoID', 'nombreEvento', 'fechaEvento')
+            ->orderBy('fechaEvento', 'asc')
+            ->limit(5)
+            ->get();
+
+        $response = [
+            'success' => false,
+            'message' => 'Eventos encontrados apunto de empezar.',
+            'data' => $eventos,
+        ];
+
+        error_log(json_encode($response, JSON_PRETTY_PRINT));
+        return response()->json($response, 200);
+    }
 }

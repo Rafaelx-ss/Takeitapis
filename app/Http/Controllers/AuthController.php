@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Usuario;
-
+use App\Helpers\ResponseHelper;
 
 class AuthController extends Controller
 {
@@ -21,7 +19,6 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'register', 'verificarcuenta']]);
     }
-
 
     /**
      * Registra un nuevo usuario.
@@ -43,18 +40,17 @@ class AuthController extends Controller
                 'rolUsuario' => 'required|in:participante,organizador',
             ]);
 
-
             $user = Usuario::create($validatedData);
 
-            return $this->successResponse($user->makeHidden(['password']), 'Usuario registrado exitosamente', 201);
+            return ResponseHelper::success('Usuario registrado exitosamente', 
+                $user->makeHidden(['password']), 201);
 
         } catch (ValidationException $e) {
-            return $this->errorResponse('Datos de registro inválidos', 400, $e->errors());
+            return ResponseHelper::error('Datos de registro inválidos', $e->errors(), 400);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al crear la cuenta', 500, ['error' => $e->getMessage()]);
+            return ResponseHelper::error('Error al crear la cuenta', ['error' => $e->getMessage()], 500);
         }
     }
-
 
     /**
      * Get a JWT via given credentials.
@@ -64,33 +60,89 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            // Validar las credenciales
             $credentials = $request->validate([
                 'email' => 'required|string|email',
                 'password' => 'required|string',
             ]);
-
+    
+            error_log('Intento de inicio de sesión con email: ' . $credentials['email']);
+    
+            // Intentar autenticar al usuario
             if (!$token = Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-                return $this->errorResponse('Credenciales inválidas', 401);
+                // $response = [
+                //     'success' => false,
+                //     'message' => 'Credenciales inválidas',
+                // ];
+    
+                // error_log(json_encode($response, JSON_PRETTY_PRINT));
+                // return response()->json($response, 401);
+                return ResponseHelper::error('Credenciales inválidas', [], 401);
             }
-
+    
+            // Obtener el usuario autenticado
             $user = Auth::user();
-            
-            $user->remember_token = $token;
-            $user->save();
+            error_log('Usuario autenticado: ' . $user->email);
+    
+            // Guardar el token en el usuario si es una instancia de Usuario
+            if ($user instanceof Usuario) {
+                $user->remember_token = $token;
+                $user->save();
+                error_log('Token guardado para el usuario: ' . $user->email);
+            }
+    
+            // Devolver una respuesta exitosa
+            // $response = [
+            //     'success' => true,
+            //     'message' => 'Inicio de sesión exitoso',
+            //     'data' => [
+            //         'user' => $user,
+            //         'token' => $token,
+            //         'token_type' => 'bearer',
+            //         'expires_in' => Auth::factory()->getTTL() * 60,
+            //     ],
+            // ];
+    
+            // error_log(json_encode($response, JSON_PRETTY_PRINT));
+            // return response()->json($response, 200);
 
-            return $this->successResponse([
+            //Helper retorna lo mismo en el mismo formato que lo de arriba
+            return ResponseHelper::success('Inicio de sesión exitoso', [
                 'user' => $user,
                 'token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => Auth::factory()->getTTL() * 60
-            ], 'Inicio de sesión exitoso');
-
+                'expires_in' => Auth::factory()->getTTL() * 60,
+                ]
+            );
+    
         } catch (ValidationException $e) {
-            return $this->errorResponse('Datos de inicio de sesión inválidos', 400, $e->errors());
+            // $response = [
+            //     'success' => false,
+            //     'message' => 'Datos de inicio de sesión inválidos',
+            //     'errors' => $e->errors(),
+            // ];
+    
+            // error_log(json_encode($response, JSON_PRETTY_PRINT));
+            // return response()->json($response, 400);
+
+            return ResponseHelper::error('Datos de inicio de sesión inválidos', ['error' => $e->getMessage()]);
+
+
+    
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al iniciar sesión', 500, ['error' => $e->getMessage()]);
+            // $response = [
+            //     'success' => false,
+            //     'message' => 'Error al iniciar sesión',
+            //     'errors' => ['error' => $e->getMessage()],
+            // ];
+    
+            // error_log(json_encode($response, JSON_PRETTY_PRINT));
+            // return response()->json($response, 500);
+
+            return ResponseHelper::error('Error al iniciar sesión', ['error' => $e->getMessage()], 500);
         }
     }
+
     /**
      * Get the authenticated User.
      *
@@ -98,7 +150,8 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(Auth::user());
+        $user = Auth::user();
+        return ResponseHelper::success('Usuario autenticado obtenido exitosamente', $user);
     }
 
     /**
@@ -110,9 +163,9 @@ class AuthController extends Controller
     {
         try {
             Auth::logout();
-            return $this->successResponse(null, 'Sesión cerrada exitosamente');
+            return ResponseHelper::success('Sesión cerrada exitosamente', null);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al cerrar sesión', 500, ['error' => $e->getMessage()]);
+            return ResponseHelper::error('Error al cerrar sesión', ['error' => $e->getMessage()], 500);
         }
     }
 
@@ -123,8 +176,18 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(Auth::refresh());
+        try {
+            $token = Auth::refresh();
+            return ResponseHelper::success('Token renovado exitosamente', [
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => Auth::factory()->getTTL() * 60,
+            ]);
+        } catch (\Exception $e) {
+            return ResponseHelper::error('Error al renovar el token', ['error' => $e->getMessage()], 500);
+        }
     }
+
 
     /**
      * Get the token array structure.
@@ -139,78 +202,6 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::factory()->getTTL() * 60
-        ]);
-    }
-
-    /**
-     * Respuesta estándar de éxito.
-     *
-     * @param  mixed  $data
-     * @param  string  $message
-     * @param  int  $status
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function successResponse($data, $message = '', $status = 200)
-    {
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
-        ], $status);
-    }
-
-    /**
-     * Respuesta estándar de error.
-     *
-     * @param  string  $message
-     * @param  int  $status
-     * @param  array|null  $errors
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function errorResponse($message, $status = 500, $errors = null)
-    {
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-            'errors' => $errors,
-        ], $status);
-    }
-
-    public function verificarcuenta(Request $request)
-    {
-
-        
-        
-        $request->validate([
-            'nombreUsuario' => 'required|string',
-            'email' => 'required|email',
-        ]);
-
-    
-        $nombreUsuario = $request->input('nombreUsuario');
-        $email = $request->input('email');
-
-      
-        $existeNombreUsuario = Usuario::where('nombreUsuario', $nombreUsuario)->exists();
-
-       
-        $existeEmail = Usuario::where('email', $email)->exists();
-
-
-        if ($existeNombreUsuario || $existeEmail) {
-            return response()->json([
-                'success' => false,
-                'message' => 'El nombre de usuario o el correo electrónico ya están registrados.',
-                'errors' => [
-                    'nombreUsuario' => $existeNombreUsuario ? 'El nombre de usuario ya está en uso.' : null,
-                    'email' => $existeEmail ? 'El correo electrónico ya está en uso.' : null,
-                ]
-            ], 200);
-        }
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'El nombre de usuario y el correo electrónico están disponibles.',
         ]);
     }
 
