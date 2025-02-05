@@ -23,6 +23,9 @@ Route::group([
     Route::post('me', [AuthController::class, 'me']);
     Route::post('register', [AuthController::class, 'register']);
     Route::post('verificarcuenta', [AuthController::class, 'verificarcuenta']);
+    Route::post('enviarcorreo', [AuthController::class, 'enviarCorreo']);
+    Route::post('codigoverificacion', [AuthController::class, 'codigoverificacion']);
+    Route::post('newpassword', [AuthController::class, 'newpassword']);
 });
 
 Route::get('users/page/', [UsuarioController::class, 'page']);

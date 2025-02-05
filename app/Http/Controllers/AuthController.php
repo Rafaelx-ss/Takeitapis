@@ -7,6 +7,9 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Helpers\ResponseHelper;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CorreoApiMailable;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -17,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verificarcuenta']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verificarcuenta', 'enviarCorreo', 'codigoverificacion','newpassword']]);
     }
 
     /**
@@ -238,4 +241,103 @@ class AuthController extends Controller
             'message' => 'El nombre de usuario y el correo electrónico están disponibles.',
         ]);
     }
+
+    public function enviarCorreo(Request $request)
+    {
+        $request->validate([
+            'correo' => 'required|email',
+           
+        ]);
+
+        $email = $request->input('correo');
+
+   
+        $existeEmail = Usuario::where('email', $email)->exists();
+
+        if (!$existeEmail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'el correo electrónico no existe.',
+                'errors' => [
+                    'email' => $existeEmail ? 'El correo electrónico no encotrado.' : null,
+                ]
+            ], 200);
+        }
+
+        $codigo = mt_rand(1000, 9999);
+
+        $hashedcodigo = Hash::make($codigo);
+
+        Usuario::where('email', $email)->update([
+            'recuperacion_contraseña' =>  $hashedcodigo,
+        ]);
+        
+
+       
+
+        $datosCorreo = [
+            'asunto' => 'Solicutud de resuperacion de contraseña',
+            'titulo' => 'Taik It',
+            'codigo' => $codigo,
+        ];
+        Mail::to($request->correo)->send(new CorreoApiMailable($datosCorreo));
+
+       
+        return ResponseHelper::success(['message' => 'Correo enviado con éxito'], 202);
+
+        
+    }
+
+
+
+
+     public function codigoverificacion(Request $request){
+        $request->validate([
+            'correo' => 'required|email',
+            'codigo' => 'required',
+           
+        ]);
+        $email = $request->input('correo');
+        $codigo = $request->input('codigo');
+
+        $usuario = Usuario::where('email',  $email)->first();
+        Usuario::where('email', $email)->update([
+            'recuperacion_contraseña' => null,
+        ]);
+        
+
+        if ($usuario && Hash::check($codigo, $usuario->recuperacion_contraseña)) {
+            return['status'=> 200,'Mensaje'=> 'Código válido'] ;
+        } else {
+            return['status'=> 400,'Mensaje'=> 'Código no válido'] ;
+        }
+
+
+    }
+
+    public function newpassword(Request $request){
+
+        $request->validate([
+            'correo' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $email = $request->input('correo');
+        $password = $request->input('password');
+
+        $newpaswword = Hash::make($password);
+
+
+        $usuario = Usuario::where('email', $email)->update([
+            'password' =>  $newpaswword,
+        ]);
+
+        if($usuario){
+            return['status'=> 200, 'Mensaje'=> 'Cambio de contaseña exitosa'];
+        }
+        return['status'=> 400, 'Mensaje'=> 'Cambio de contaseña exitosa'];
+        
+    }
+
+
 }
