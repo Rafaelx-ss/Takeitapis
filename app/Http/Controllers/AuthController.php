@@ -277,7 +277,7 @@ class AuthController extends Controller
 
         $datosCorreo = [
             'asunto' => 'Solicutud de resuperacion de contraseña',
-            'titulo' => 'Taik It',
+            'titulo' => 'Take It',
             'codigo' => $codigo,
         ];
         Mail::to($request->correo)->send(new CorreoApiMailable($datosCorreo));
@@ -294,7 +294,7 @@ class AuthController extends Controller
      public function codigoverificacion(Request $request){
         $request->validate([
             'correo' => 'required|email',
-            'codigo' => 'required',
+            'codigo' => '',
            
         ]);
         $email = $request->input('correo');
@@ -307,9 +307,10 @@ class AuthController extends Controller
         
 
         if ($usuario && Hash::check($codigo, $usuario->recuperacion_contraseña)) {
-            return['status'=> 200,'Mensaje'=> 'Código válido'] ;
+         
+            return ResponseHelper::success(['message' => 'Código válido'], 202);
         } else {
-            return['status'=> 400,'Mensaje'=> 'Código no válido'] ;
+            return ResponseHelper::error('Código no válido');
         }
 
 
@@ -333,9 +334,11 @@ class AuthController extends Controller
         ]);
 
         if($usuario){
-            return['status'=> 200, 'Mensaje'=> 'Cambio de contaseña exitosa'];
+        
+            return ResponseHelper::success(['message' => 'Cambio de contaseña exitosa'], 202);
         }
-        return['status'=> 400, 'Mensaje'=> 'Cambio de contaseña exitosa'];
+
+        return ResponseHelper::error('No se pudo cambiar la contaseña');
         
     }
 

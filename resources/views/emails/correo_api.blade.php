@@ -73,7 +73,7 @@
             <p>Si no solicitó este cambio, puede ignorar este mensaje.</p>
         </div>
         <div class="footer">
-            <p>&copy; 2025 Taik It. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Take It. Todos los derechos reservados.</p>
         </div>
     </div>
 
