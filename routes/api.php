@@ -77,6 +77,10 @@ Route::prefix('eventos')->group(function () {
     Route::delete('delete/{eventoID}', [EventoController::class, 'destroy']);
     Route::get('/filtrar', [EventoController::class, 'filter']);
     Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);
+    Route::get('/usuario/{usuarioID}', [EventoController::class, 'usuario']);
+    Route::post('inscribirUsuario', [EventoController::class, 'inscribirUsuario']);
+
+    
 });
 
 Route::prefix('patrocinadores')->group(function () {

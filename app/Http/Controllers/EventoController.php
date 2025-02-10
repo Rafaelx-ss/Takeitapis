@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Subcategoria;
 use App\Helpers\ResponseHelper;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str; 
+use App\Models\qr_codes;
+
 
 class EventoController extends Controller
 {
@@ -210,7 +215,6 @@ class EventoController extends Controller
         return ResponseHelper::success('Evento eliminado exitosamente', null);
     }
     
-
     public function filter(Request $request)
     {
         $query = Evento::query();
@@ -306,12 +310,96 @@ class EventoController extends Controller
             ->limit(5)
             ->get();
 
-        $response = [
-            'success' => false,
-            'message' => 'Eventos encontrados apunto de empezar.',
-            'data' => $eventos,
-        ];
+        foreach ($eventos as $evento) {
+            $evento->imagenEvento = 'images/eventos/mario-kart.png';
+        }
+            
 
         return ResponseHelper::success('Eventos próximos a iniciar obtenidos exitosamente', $eventos);
+    }
+
+    public function usuario($usuarioID)
+    {
+        $eventos = Evento::whereHas('usuarios', function ($query) use ($usuarioID) {
+            $query->where('usuarios.usuarioID', $usuarioID);
+        })
+        ->join('categorias', 'eventos.categoriaID', '=', 'categorias.categoriaID') // Hacemos el JOIN
+        ->select('eventos.eventoID', 'eventos.nombreEvento', 'categorias.nombreCategoria', 'eventos.fechaEvento', 'eventos.lugarEvento', 'eventos.costoEvento')
+        ->get();
+    
+        foreach ($eventos as $evento) {
+            $evento->imagenEvento = 'images/eventos/mario-kart.png';
+        }
+    
+        return ResponseHelper::success('Eventos del usuario obtenidos exitosamente', $eventos);
+    }
+
+    public function inscribirUsuario(Request $request)
+    {
+        // $qr_code = [];
+        // $qr_code['qr_code'] = 'qr_codes/evento_7_usuario_2_xS4urpNGI0.svg'; 
+
+        // return ResponseHelper::success('Prueba de exutito', [$qr_code], 200);
+
+        $usuarioID = $request->input('usuarioID');
+        $eventoID = $request->input('eventoID');
+    
+        $evento = Evento::find($eventoID);
+    
+        if (!$evento) {
+            return ResponseHelper::error('Evento no encontrado', [], 404);
+        }
+    
+        // Verificar si el usuario ya está inscrito para evitar duplicados
+        if ($evento->usuarios()->where('usuarios.usuarioID', $usuarioID)->exists()) {
+            return ResponseHelper::error('¡Ya te has inscrito al evento!', [], 400);
+        }
+    
+        // Generar la información del QR
+        $qrData = json_encode([
+            'usuarioID' => $usuarioID,
+            'eventoID' => $eventoID,
+            'nombreEvento' => $evento->nombreEvento,
+            'fechaEvento' => $evento->fechaEvento
+        ]);
+    
+        // Nombre del archivo QR en formato SVG
+        $qrFileName = "qr_codes/evento_{$eventoID}_usuario_{$usuarioID}_" . Str::random(10) . "_" . now()->timestamp . ".svg";
+    
+        // Generar el QR en formato SVG en lugar de PNG
+        $qrImage = QrCode::format('svg')
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($qrData);
+        
+        if(!$qrImage){
+            return ResponseHelper::error('No se pudo generar el QR', [], 400);
+        }
+    
+        // Guardar el QR en el almacenamiento público
+        if(!Storage::disk('public')->put($qrFileName, $qrImage)){
+            return ResponseHelper::error('No se pudo guardar el QR', [], 400);
+        }
+
+        // Inscribir al usuario en el evento
+        // if(!){
+        //     return ResponseHelper::error('No se pudo inscribir al usuario en el evento', [], 400);
+        // }
+        $evento->usuarios()->attach($usuarioID);
+
+        // Guardar el QR en la base de datos
+        $qrCode = new qr_codes();
+        $qrCode->eventoID = $eventoID;
+        $qrCode->usuarioID = $usuarioID;
+        $qrCode->rutaqr = $qrFileName;
+
+        if(!$qrCode->save()){
+            return ResponseHelper::error('No se pudo guardar el QR en la base de datos', [], 400);
+        }
+    
+        // Obtener la URL del QR para acceso público
+        // $qrUrl = asset("storage/{$qrFileName}"); // <- {http://localhost:8000/storage/qr_codes/evento_1_usuario_1_1712987400.svg}
+    
+        return ResponseHelper::success('Usuario inscrito y QR generado exitosamente', [$qrCode]);
     }
 }

@@ -71,6 +71,7 @@ class Evento extends Model
         'estadoEvento',
         'createdById',
         'updatedById',
+        'imagenEvento',
     ];
 
     /**
@@ -88,5 +89,21 @@ class Evento extends Model
     public function usuarios()
     {
         return $this->belongsToMany(Usuario::class, 'usuarioseventos', 'eventoID', 'usuarioID');
+    }
+
+    public function patrocinador()
+    {
+        return $this->belongsTo(Patrocinador::class, 'patrocinadorID', 'patrocinadorID');
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoriaID', 'categoriaID');
+    }
+    
+
+    public function subcategoria()
+    {
+        return $this->belongsTo(Subcategoria::class, 'subCategoriaID', 'subCategoriaID');
     }
 }
