@@ -9,7 +9,8 @@ use App\Models\Subcategoria;
 use App\Helpers\ResponseHelper;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str; 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 use App\Models\qr_codes;
 
 
@@ -364,27 +365,29 @@ class EventoController extends Controller
         ]);
     
         // Nombre del archivo QR en formato SVG
-        $qrFileName = "qr_codes/evento_{$eventoID}_usuario_{$usuarioID}_" . Str::random(10) . "_" . now()->timestamp . ".svg";
+        $qrFileName = "images/qr_code/evento_{$eventoID}_usuario_{$usuarioID}_" . Str::random(10) . "_" . now()->timestamp . ".svg";
     
-        // Generar el QR en formato SVG en lugar de PNG
+        // Generar el QR en formato SVG 
         $qrImage = QrCode::format('svg')
             ->size(300)
             ->errorCorrection('H')
             ->generate($qrData);
-        
+
         if(!$qrImage){
             return ResponseHelper::error('No se pudo generar el QR', [], 400);
         }
-    
-        // Guardar el QR en el almacenamiento público
-        if(!Storage::disk('public')->put($qrFileName, $qrImage)){
+
+        // Verificar si la carpeta 'public/images/qr_code' existe, si no, crearla
+        if (!File::exists(public_path('images/qr_code'))) {
+            File::makeDirectory(public_path('images/qr_code'), 0755, true);
+        }
+
+        // Guardar el QR en la carpeta pública
+        if (!file_put_contents(public_path().'/'.$qrFileName, $qrImage)) {
             return ResponseHelper::error('No se pudo guardar el QR', [], 400);
         }
 
-        // Inscribir al usuario en el evento
-        // if(!){
-        //     return ResponseHelper::error('No se pudo inscribir al usuario en el evento', [], 400);
-        // }
+
         $evento->usuarios()->attach($usuarioID);
 
         // Guardar el QR en la base de datos
