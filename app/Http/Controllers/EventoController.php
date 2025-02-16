@@ -29,7 +29,7 @@ class EventoController extends Controller
         $page = $request->input('page', 1);
         $perPage = 10; 
 
-        $eventos = Evento::select('eventoID', 'nombreEvento', 'fechaEvento', 'costoEvento')->where('estadoEvento', 1)->paginate($perPage);
+        $eventos = Evento::select('*')->where('estadoEvento', 1)->paginate($perPage);
 
         return ResponseHelper::success('Eventos paginados obtenidos exitosamente', $eventos);
     }
@@ -333,6 +333,36 @@ class EventoController extends Controller
     
         return ResponseHelper::success('Eventos del usuario obtenidos exitosamente', $eventos);
     }
+
+    public function admin($usuarioID, Request $request)
+{
+    $page = $request->query('page', 1);
+    $limit = $request->query('limit', 10);
+    $offset = ($page - 1) * $limit;
+
+    $eventos = Evento::whereHas('usuarios', function ($query) use ($usuarioID) {
+            $query->where('usuarios.usuarioID', $usuarioID);
+        })
+        ->join('categorias', 'eventos.categoriaID', '=', 'categorias.categoriaID')
+        ->select(
+            'eventos.eventoID', 
+            'eventos.nombreEvento', 
+            'categorias.nombreCategoria as categoriaNombre', 
+            'eventos.fechaEvento', 
+            'eventos.lugarEvento', 
+            'eventos.costoEvento'
+        )
+        ->offset($offset)
+        ->limit($limit)
+        ->get();
+
+    foreach ($eventos as $evento) {
+        $evento->imagenEvento = 'images/eventos/mario-kart.png';
+    }
+
+    return ResponseHelper::success('Eventos del usuario obtenidos exitosamente', $eventos);
+}
+
 
     public function inscribirUsuario(Request $request)
     {

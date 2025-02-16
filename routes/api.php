@@ -78,6 +78,7 @@ Route::prefix('eventos')->group(function () {
     Route::get('/filtrar', [EventoController::class, 'filter']);
     Route::patch('/{id}/toggle', [EventoController::class, 'toggle']);
     Route::get('/usuario/{usuarioID}', [EventoController::class, 'usuario']);
+    Route::get('/admin/{usuarioID}', [EventoController::class, 'admin']);
     Route::post('inscribirUsuario', [EventoController::class, 'inscribirUsuario']);
 
     
