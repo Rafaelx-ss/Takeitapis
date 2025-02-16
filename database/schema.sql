@@ -8,3 +8,6 @@ ALTER TABLE `eventos` CHANGE `tipo_creador` `tipo_creador` CHAR(1) CHARACTER SET
 CREATE TABLE `takeit`.`qr_codes` (`qrcodeID` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , `eventoID` BIGINT(20) UNSIGNED NOT NULL , `usuarioID` BIGINT(20) UNSIGNED NOT NULL , `rutaqr` TEXT NOT NULL , PRIMARY KEY (`qrcodeID`)) ENGINE = InnoDB;
 
 ALTER TABLE `qr_codes` ADD CONSTRAINT `qr_ibfk_1` FOREIGN KEY (`eventoID`) REFERENCES `eventos`(`eventoID`) ON DELETE RESTRICT ON UPDATE RESTRICT; ALTER TABLE `qr_codes` ADD CONSTRAINT `qr_ibfk_2` FOREIGN KEY (`usuarioID`) REFERENCES `usuarios`(`usuarioID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- 10/02/2025 kevin
+ALTER TABLE `qr_codes` ADD `estado` TINYINT(1) NOT NULL AFTER `rutaqr`;
