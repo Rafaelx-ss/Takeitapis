@@ -96,3 +96,6 @@ Route::prefix('patrocinadores')->group(function () {
 });
 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);
+
+
+Route::get('qrcode/{usuarioID}/{eventoID}', [QrCodeController::class, 'getQrCode']);
