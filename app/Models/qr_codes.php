@@ -13,7 +13,8 @@ class qr_codes extends Model
     protected $fillable = [
         'eventoID',
         'usuarioID',
-        'rutaqr'
+        'rutaqr',
+        'estado'
     ];
 
     public function evento()
