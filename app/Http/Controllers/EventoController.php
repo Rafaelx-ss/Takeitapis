@@ -11,6 +11,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str; 
 use App\Models\qr_codes;
+use App\Models\Usuario;
 
 
 class EventoController extends Controller
@@ -60,6 +61,14 @@ class EventoController extends Controller
             ]);
         }
 
+        $usuario = Usuario::find($usuarioID);
+
+        if(!$usuario){
+            return ResponseHelper::error('Usuario no encontrado', [], 404);
+        }
+
+        $request->merge(['createby' => $usuario->usuarioID]);
+
         $validatedData = $request->validate([
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
@@ -77,6 +86,8 @@ class EventoController extends Controller
             'horaEvento' => 'required|date_format:H:i',
             'duracionEvento' => 'required|integer|min:1|max:48',
             'kitEvento' => 'required|string|max:255',
+            'tipo_creador' => 'required|string|in:O,E',
+            'createby' => 'required|integer|exists:usuarios,usuarioID',
         ], [
             'categoriaID.required' => 'La categoría es obligatoria.',
             'nombreEvento.required' => 'El nombre del evento es obligatorio.',
@@ -85,6 +96,9 @@ class EventoController extends Controller
             'horaEvento.date_format' => 'La hora del evento debe estar en el formato HH:mm.',
             'duracionEvento.min' => 'La duración mínima del evento es de 1 hora.',
             'duracionEvento.max' => 'La duración máxima del evento es de 48 horas.',
+            'tipo_creador.in' => 'El tipo de creador debe ser O o E.',
+            'createby.required' => 'El creador es obligatorio.',
+            'createby.exists' => 'El creador no existe.',
         ]);
 
         try {

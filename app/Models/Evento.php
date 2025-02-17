@@ -72,6 +72,8 @@ class Evento extends Model
         'createdById',
         'updatedById',
         'imagenEvento',
+        'tipo_creador',
+        'createby',
     ];
 
     /**
