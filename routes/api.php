@@ -10,7 +10,8 @@ use App\Http\Controllers\{
     EstadoController,
     EventoController,
     PatrocinadorController,
-    UsuarioController
+    UsuarioController,
+    Qr_codeController
 };
 
 Route::group([
@@ -98,4 +99,4 @@ Route::prefix('patrocinadores')->group(function () {
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);
 
 
-Route::get('qrcode/{usuarioID}/{eventoID}', [QrCodeController::class, 'getQrCode']);
+Route::get('qr_codes/evento/{eventoID}/usuario/{usuarioID}', [Qr_codeController::class, 'getQrCode']);

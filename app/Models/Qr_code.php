@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class qr_codes extends Model
+class Qr_code extends Model
 {
     protected $table = 'qr_codes';
     protected $primaryKey = 'qrcodeID';

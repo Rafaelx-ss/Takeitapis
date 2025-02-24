@@ -10,7 +10,7 @@ use App\Helpers\ResponseHelper;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str; 
-use App\Models\qr_codes;
+use App\Models\Qr_code;
 use App\Models\Usuario;
 
 
@@ -432,7 +432,7 @@ class EventoController extends Controller
         $evento->usuarios()->attach($usuarioID);
 
         // Guardar el QR en la base de datos
-        $qrCode = new qr_codes();
+        $qrCode = new Qr_code();
         $qrCode->eventoID = $eventoID;
         $qrCode->usuarioID = $usuarioID;
         $qrCode->rutaqr = $qrFileName;
