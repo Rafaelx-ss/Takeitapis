@@ -100,3 +100,7 @@ Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']
 
 
 Route::get('qr_codes/evento/{eventoID}/usuario/{usuarioID}', [Qr_codeController::class, 'getQrCode']);
+
+Route::put('qr_codes/{usuarioID}/{eventoID}/finalizar', [Qr_codeController::class, 'finalizarQR']);
+
+
