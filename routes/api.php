@@ -11,7 +11,8 @@ use App\Http\Controllers\{
     EventoController,
     PatrocinadorController,
     UsuarioController,
-    Qr_codeController
+    Qr_codeController,
+    UsuarioEventosController
 };
 
 Route::group([
@@ -96,6 +97,10 @@ Route::prefix('patrocinadores')->group(function () {
     Route::patch('/{i}/toggle', [PatrocinadorController::class, 'toggle']);
 });
 
+
+Route::get('clear/eventosusuario', [UsuarioEventosController::class, 'eliminarEventos']);
+
+ 
 Route::get('/getdireccionesusuario',[DireccionUsuarioController::class, 'index']);
 
 
