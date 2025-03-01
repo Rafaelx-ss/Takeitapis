@@ -339,6 +339,8 @@ class EventoController extends Controller
         })
         ->join('categorias', 'eventos.categoriaID', '=', 'categorias.categoriaID') // Hacemos el JOIN
         ->select('eventos.eventoID', 'eventos.nombreEvento', 'categorias.nombreCategoria', 'eventos.fechaEvento', 'eventos.lugarEvento', 'eventos.costoEvento')
+        ->orderBy('eventos.fechaEvento', 'desc')  // Ordenar por fecha de manera descendente
+        ->orderBy('eventos.eventoID', 'desc')     // Ordenamiento secundario por ID
         ->get();
     
         foreach ($eventos as $evento) {
