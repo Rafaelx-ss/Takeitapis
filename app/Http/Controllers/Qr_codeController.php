@@ -38,5 +38,39 @@ class Qr_codeController extends Controller
     
         return ResponseHelper::error('Ticket  no encontrado', [], 200);
     }
-    
+
+
+    public function QrCanjes($eventoID)
+    {
+        $qrCode = Qr_code::where('eventoID', $eventoID)
+                        ->where('estado', 1)
+                        ->get();
+        if ($qrCode) {
+            return ResponseHelper::success('Qr encontrados', $qrCode, 200);
+        } else {
+            return ResponseHelper::error('Qr no encontrados', [], 401);
+        }
+    }
+
+    public function contarQrEstadoCero($eventoID)
+    {
+        $count = Qr_code::where('eventoID', $eventoID)
+                        ->where('estado', 0)
+                        ->count();
+        return ResponseHelper::success('Cantidad de Qr con estado 0', ['count' => $count], 200);
+    }
+
+    public function VerParticiparticipantes($eventoID)
+    {
+        $qrCode = Qr_code::where('eventoID', $eventoID)
+                        ->join('usuarios', 'usuarios.usuarioID', '=', 'qr_codes.usuarioID')
+                        ->select('usuarios.nombreUsuario', 'usuarios.usuario', 'usuarios.email')
+                        ->where('estado', 0)
+                        ->get();
+        if ($qrCode) {
+            return ResponseHelper::success('Qr encontrados', $qrCode, 200);
+        } else {
+            return ResponseHelper::error('Qr no encontrados', [], 401);
+        }
+    }
 }

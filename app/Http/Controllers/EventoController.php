@@ -69,13 +69,88 @@ class EventoController extends Controller
 
         $request->merge(['createby' => $usuario->usuarioID]);
 
+        // -- Ejemplo de como se guarda en la base de datos los costos
+        // -- "costoEvento": [
+        // --     {
+        // --         "nombre": "entrada_general",
+        // --         "precio": 10
+        // --     },
+        // --     {
+        // --         "nombre": "entrada_vip",
+        // --          "precio": 20
+        // --     },
+        // --     {
+        // --        "nombre": "entrada_palco",
+        // --        "precio": 30
+        // --     }
+        // --     ]
+
+        // Ejemplo de lo que trae el backend:
+        // {
+        //     "nombreEvento": "TESTESTTESTEST",
+        //     "categoriaID": 11,
+        //     "subCategoriaID": 24,
+        //     "lugarEvento": "TESTESTTESTEST",
+        //     "maximoParticipantesEvento": 1,
+        //     "costoEvento": 1,
+        //     "descripcionEvento": "TESTESTTESTESTTESTEST",
+        //     "cpEvento": "97160",
+        //     "municioEvento": "Merida",
+        //     "estadoID": 31,
+        //     "direccionEvento": "TESTESTTESTESTTESTEST",
+        //     "telefonoEvento": "9999583010",
+        //     "fechaEvento": "2025-03-06",
+        //     "horaEvento": "21:04",
+        //     "duracionEvento": 1,
+        //     "kitEvento": "TESTEST",
+        //     "nuevaSubcategoria": "",
+        //     "nombreTipoEntrada2": "VIP",
+        //     "costoTipoEntrada2": 2,
+        //     "nombreTipoEntrada3": "PREMIUN",
+        //     "costoTipoEntrada3": 3,
+        //     "countCostoEvento": 3,
+        //     "categoriaNombre": "",
+        //     "subCategoriaNombre": "",
+        //     "tipo_creador": "O",
+        //     "imagen_evento": null
+        //   }
+
+
+        $costoEvento = [];
+
+        if ($request->input('countCostoEvento') >= 1) {
+            $costoEvento[] = [
+                'nombre' => "entrada_general",
+                'precio' => $request->input('costoEvento') ?? 0
+            ];
+        }
+
+        if ($request->input('countCostoEvento') >= 2) {
+            $costoEvento[] = [
+                'nombre' => $request->input('nombreTipoEntrada2') ?? "Entrada VIP",
+                'precio' => $request->input('costoTipoEntrada2') ?? 0
+            ];
+        }
+
+        if ($request->input('countCostoEvento') == 3) {
+            $costoEvento[] = [
+                'nombre' => $request->input('nombreTipoEntrada3') ?? "Entrada Palco",
+                'precio' => $request->input('costoTipoEntrada3') ?? 0
+            ];
+        }
+
+        $request->merge(['costoEvento' => json_encode($costoEvento)]);
+
+
+
         $validatedData = $request->validate([
             'categoriaID' => 'required|integer|exists:categorias,categoriaID',
             'subCategoriaID' => 'required|integer|exists:subcategorias,subcategoriaID',
             'nombreEvento' => 'required|string|max:255',
             'lugarEvento' => 'required|string|max:255',
             'maximoParticipantesEvento' => 'nullable|integer|min:1|max:10000',
-            'costoEvento' => 'nullable|numeric|min:0',
+            // 'costoEvento' => 'nullable|numeric|min:0',
+            'costoEvento' => 'json|required',
             'descripcionEvento' => 'nullable|string|max:500',
             'cpEvento' => 'required|string|size:5|regex:/^\d{5}$/',
             'municioEvento' => 'required|string|max:100',
