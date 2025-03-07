@@ -12,7 +12,8 @@ use App\Http\Controllers\{
     PatrocinadorController,
     UsuarioController,
     Qr_codeController,
-    UsuarioEventosController
+    UsuarioEventosController,
+    SubcategoriaController
 };
 
 Route::group([
@@ -36,7 +37,7 @@ Route::delete('users/delete/{usuarioID}', [UsuarioController::class, 'destroy'])
 Route::get('users/get/{usuarioID}', [UsuarioController::class, 'show']);
 
 
-Route::prefix('categorias')->group(function () {
+Route::prefix('        ')->group(function () {
     Route::get('', [CategoriaController::class, 'index']);
     Route::get('form', [CategoriaController::class, 'form']);
     Route::get('subcategoria/{categoriaID}', [CategoriaController::class, 'subcategoria']);
@@ -48,6 +49,14 @@ Route::prefix('categorias')->group(function () {
     Route::patch('/{id}/toggle', [CategoriaController::class, 'toggle']);
 });
 
+Route::prefix('subcategorias')->group(function () {
+    Route::get('', [SubcategoriaController::class, 'index']);
+    Route::post('post', [SubcategoriaController::class, 'store']);
+    Route::get('get/{id}', [SubcategoriaController::class, 'show']);
+    Route::put('put/{id}', [SubcategoriaController::class, 'update']);
+    Route::delete('delete/{id}', [SubcategoriaController::class, 'destroy']);
+    Route::patch('/{id}/toggle', [SubcategoriaController::class, 'toggle']);
+});
 
 Route::prefix('paises')->group(function () {
     Route::get('get/', [PaisController::class, 'index']);
