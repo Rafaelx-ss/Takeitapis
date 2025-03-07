@@ -108,4 +108,6 @@ Route::get('qr_codes/evento/{eventoID}/usuario/{usuarioID}', [Qr_codeController:
 
 Route::put('qr_codes/{usuarioID}/{eventoID}/finalizar', [Qr_codeController::class, 'finalizarQR']);
 
+Route::get('qr_codesevents/{eventoID}', [Qr_codeController::class, 'contarQrEstadoCero']);
 
+Route::get('qr_codeParticipantes/{eventoID}', [Qr_codeController::class, 'VerParticiparticipantes']);
