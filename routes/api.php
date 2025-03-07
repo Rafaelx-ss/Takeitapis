@@ -91,6 +91,7 @@ Route::prefix('eventos')->group(function () {
     Route::get('/usuario/{usuarioID}', [EventoController::class, 'usuario']);
     Route::get('/admin/{usuarioID}', [EventoController::class, 'admin']);
     Route::post('inscribirUsuario', [EventoController::class, 'inscribirUsuario']);
+    
 
     
 });
@@ -120,3 +121,7 @@ Route::put('qr_codes/{usuarioID}/{eventoID}/finalizar', [Qr_codeController::clas
 Route::get('qr_codesevents/{eventoID}', [Qr_codeController::class, 'contarQrEstadoCero']);
 
 Route::get('qr_codeParticipantes/{eventoID}', [Qr_codeController::class, 'VerParticiparticipantes']);
+
+
+Route::get('actualizarEstructura', [EventoController::class, 'actualizarEstructura']);
+Route::get('updatedatos', [EventoController::class, 'updatedatos']);

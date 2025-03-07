@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str; 
 use App\Models\Qr_code;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 
 
 class EventoController extends Controller
@@ -522,4 +523,27 @@ class EventoController extends Controller
     
         return ResponseHelper::success('Usuario inscrito y QR generado exitosamente', [$qrCode]);
     }
+
+
+    
+    public function actualizarEstructura()
+    {
+        DB::statement("ALTER TABLE eventos CHANGE costoEvento costoEvento JSON NULL DEFAULT NULL;");
+
+        return response()->json(['message' => 'Estructura de la tabla actualizada correctamente']);
+    }
+
+    public function updatedatos()
+    {
+        DB::table('eventos')->update([
+            'costoEvento' => json_encode([
+                ['nombre' => 'entrada_general', 'precio' => 10],
+                ['nombre' => 'entrada_vip', 'precio' => 20],
+                ['nombre' => 'entrada_palco', 'precio' => 200],
+            ])
+        ]);
+
+        return response()->json(['message' => 'Evento actualizado correctamente']);
+    }
+
 }
