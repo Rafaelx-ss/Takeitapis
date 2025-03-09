@@ -13,7 +13,9 @@ use App\Http\Controllers\{
     UsuarioController,
     Qr_codeController,
     UsuarioEventosController,
-    SubcategoriaController
+    SubcategoriaController,
+    DashboardController,
+    ReporteController
 };
 
 Route::group([
@@ -125,3 +127,10 @@ Route::get('qr_codeParticipantes/{eventoID}', [Qr_codeController::class, 'VerPar
 
 Route::get('actualizarEstructura', [EventoController::class, 'actualizarEstructura']);
 Route::get('updatedatos', [EventoController::class, 'updatedatos']);
+
+Route::get('totalparticipantes/{IDorganizador}', [ DashboardController::class, 'totalParticipantes']);
+Route::get('cantidadEventosTerminados/{usuarioID}', [ DashboardController::class, 'cantidadEventosTerminados']);
+
+Route::get('reportes/{IDorganizador}', [ReporteController::class, 'reportes']);
+
+Route::get('reportesEventos/{IDorganizador}', [ReporteController::class, 'reportesEventos']);
