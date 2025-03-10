@@ -133,4 +133,9 @@ Route::get('cantidadEventosTerminados/{usuarioID}', [ DashboardController::class
 
 Route::get('reportes/{IDorganizador}', [ReporteController::class, 'reportes']);
 
+
 Route::get('reportesEventos/{IDorganizador}', [ReporteController::class, 'reportesEventos']);
+
+Route::put('updatereportesstatus/{ReportesID}', [ReporteController::class, 'updatereportesstatus']);
+
+Route::get('crearYInsertarReportes', [ReporteController::class, 'crearYInsertarReportes']);
