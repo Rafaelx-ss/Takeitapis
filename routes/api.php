@@ -139,3 +139,6 @@ Route::get('reportesEventos/{IDorganizador}', [ReporteController::class, 'report
 Route::put('updatereportesstatus/{ReportesID}', [ReporteController::class, 'updatereportesstatus']);
 
 Route::get('crearYInsertarReportes', [ReporteController::class, 'crearYInsertarReportes']);
+
+Route::get('Graficadash/{IDorganizador}', [DashboardController::class, 'Graficadash']);
+
