@@ -39,7 +39,7 @@ Route::delete('users/delete/{usuarioID}', [UsuarioController::class, 'destroy'])
 Route::get('users/get/{usuarioID}', [UsuarioController::class, 'show']);
 
 
-Route::prefix('        ')->group(function () {
+Route::prefix('categorias')->group(function () {
     Route::get('', [CategoriaController::class, 'index']);
     Route::get('form', [CategoriaController::class, 'form']);
     Route::get('subcategoria/{categoriaID}', [CategoriaController::class, 'subcategoria']);
