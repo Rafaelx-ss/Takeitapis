@@ -39,3 +39,47 @@ ALTER TABLE `eventos` CHANGE `costoEvento` `costoEvento` JSON NULL DEFAULT NULL;
 --     ]
 
 update eventos set costoEvento = '[{"nombre": "entrada_general", "precio": 10}, {"nombre": "entrada_vip", "precio": 20}, {"nombre": "entrada_palco", "precio": 30}]';
+
+
+-- 10/03/2025 PEPE --- nueva tabla de reportes 
+
+-- Estructura de tabla para la tabla `reportes`
+--
+
+CREATE TABLE `reportes` (
+  `reporteID` int(11) NOT NULL,
+  `eventoID` bigint(20) UNSIGNED NOT NULL,
+  `Tipo` varchar(255) NOT NULL,
+  `usuarioID` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `descripcion` int(11) NOT NULL,
+  `detalle` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `reportes`
+--
+ALTER TABLE `reportes`
+  ADD PRIMARY KEY (`reporteID`),
+  ADD KEY `fk_usuariosID` (`usuarioID`),
+  ADD KEY `fk_eventos` (`eventoID`);
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `reportes`
+--
+ALTER TABLE `reportes`
+  ADD CONSTRAINT `fk_eventos` FOREIGN KEY (`eventoID`) REFERENCES `eventos` (`eventoID`),
+  ADD CONSTRAINT `fk_usuariosID` FOREIGN KEY (`usuarioID`) REFERENCES `usuarios` (`usuarioID`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
