@@ -15,7 +15,8 @@ use App\Http\Controllers\{
     UsuarioEventosController,
     SubcategoriaController,
     DashboardController,
-    ReporteController
+    ReporteController,
+    ResultadosController
 };
 
 Route::group([
@@ -142,3 +143,9 @@ Route::get('crearYInsertarReportes', [ReporteController::class, 'crearYInsertarR
 
 Route::get('Graficadash/{IDorganizador}', [DashboardController::class, 'Graficadash']);
 
+Route::get('eventosadmin/{IDorganizador}', [ResultadosController::class, 'eventosadmin']);
+
+Route::get('duracionEventostotales/{IDorganizador}', [ResultadosController::class, 'duracionEventostotales']);
+
+
+Route::get('ParticipanteEvento/{IDEvento}', [ResultadosController::class, 'ParticipanteEvento']);
