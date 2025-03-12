@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
+use App\Models\DireccionUsuario;
 
 use Illuminate\Http\Request;
 
@@ -28,34 +29,78 @@ class UsuarioController extends Controller
     }
 
     public function update(Request $request, $usuarioID)
-    {
-        try {
-            $validatedData = $request->validate([
-                'nombreUsuario' => 'required|string|min:2|max:100',
-                'usuario' => 'required|string|min:4|max:50',
-                'email' => 'required|email|max:150',
-                'password' => 'required|string|min:6|max:100',
-                'telefonoUsuario' => 'nullable|string|min:8|max:15',
-                'fechaNacimientoUsuario' => 'nullable|date',
-                'generoUsuario' => 'nullable|in:MASCULINO,FEMENINO,OTRO',
-                'rolUsuario' => 'required|in:participante,organizador',
-            ]);
+{
+    try {
+        // Validar los datos proporcionados
+        $validatedData = $request->validate([
+            'key' => 'required|string',
+            'valor' => 'required',
+        ]);
 
-            $user = Usuario::find($usuarioID);
-            if (!$user) {
-                return response()->json(["message" => "Usuario no encontrado"], 404);
-            }
-
-            $user->update($validatedData);
-
-            return response()->json("Usuario editado exitosamente", 200);
-
-        } catch (ValidationException $e) {
-            return response()->json(["message" => "Datos de registro inválidos", "error" => $e->errors()], 400);
-        } catch (\Exception $e) {
-            return response()->json(["message" => "Error al editar el usuario", "error" => $e->getMessage()], 500);
+        // Buscar el usuario por ID
+        $user = Usuario::find($usuarioID);
+        if (!$user) {
+            return response()->json(["message" => "Usuario no encontrado"], 404);
         }
+
+        // Validar que el key proporcionado sea un campo válido
+        $validKeys = [
+            'nombreUsuario',
+            'usuario',
+            'email',
+            'password',
+            'telefonoUsuario',
+            'fechaNacimientoUsuario',
+            'generoUsuario',
+            'rolUsuario',
+            'direccion'
+        ];
+
+        // Actualizar el campo especificado con el nuevo valor
+        $key = $validatedData['key'];
+        $valor = $validatedData['valor'];
+
+        if (in_array($validatedData['key'], $validKeys)) {
+            if ($key === 'direccion') {
+                // Buscar en la tabla direccionesusuarios y actualizar
+                $direccion = DireccionUsuario::where('usuarioID', $usuarioID)->first();
+                if (!$direccion) {
+                    $direccion = new DireccionUsuario();
+                    $direccion->usuarioID = $usuarioID;
+                    $direccion->activoDireccion = 1;
+                    $direccion->estadoDireccion = 1;
+                    $direccion->cpDireccion = 0;
+                    $direccion->municipioDireccion = '';
+                    $direccion->estadoID = 1;   
+                    $direccion->direccion = $valor;
+                    $direccion->save();
+
+                }else {
+                    $direccion->direccion = $valor;
+                    $direccion->save();
+                }
+                
+            } else { 
+                if ($key === 'password') {
+                    $user->$key = bcrypt($valor);
+                }  else {
+                    $user->$key = $valor;
+                }
+
+                $user->save();
+            }
+        }else {
+            return response()->json(["message" => "Campo inválido"], 400);
+        }
+
+        return response()->json("Usuario editado exitosamente", 200);
+
+    } catch (ValidationException $e) {
+        return response()->json(["message" => "Datos de registro inválidos", "error" => $e->errors()], 400);
+    } catch (\Exception $e) {
+        return response()->json(["message" => "Error al editar el usuario", "error" => $e->getMessage()], 500);
     }
+}
 
 
     /**

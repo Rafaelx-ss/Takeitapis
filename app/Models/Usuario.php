@@ -102,6 +102,8 @@ class Usuario extends Authenticatable implements JWTSubject
     /**
      * Relación con el modelo DireccionUsuario.
      * Un usuario puede tener muchas direcciones.
+     * 
+     * $user->direcciones->direccion
      */
     public function direcciones()
     {

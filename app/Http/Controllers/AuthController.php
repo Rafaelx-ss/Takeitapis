@@ -110,6 +110,11 @@ class AuthController extends Controller
             // return response()->json($response, 200);
 
             //Helper retorna lo mismo en el mismo formato que lo de arriba
+
+
+            $direccion = $user->direccion ? $user->direccion->direccion : "--------";
+            $user->direccion = $direccion;
+
             return ResponseHelper::success('Inicio de sesión exitoso', [
                 'user' => $user,
                 'token' => $token,
