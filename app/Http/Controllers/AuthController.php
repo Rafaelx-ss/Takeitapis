@@ -63,6 +63,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+
+            error_log('Intento de inicio de sesión');
             // Validar las credenciales
             $credentials = $request->validate([
                 'email' => 'required|string|email',
@@ -73,13 +75,6 @@ class AuthController extends Controller
     
             // Intentar autenticar al usuario
             if (!$token = Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-                // $response = [
-                //     'success' => false,
-                //     'message' => 'Credenciales inválidas',
-                // ];
-    
-                // error_log(json_encode($response, JSON_PRETTY_PRINT));
-                // return response()->json($response, 401);
                 return ResponseHelper::error('Credenciales inválidas', [], 401);
             }
     
@@ -93,27 +88,20 @@ class AuthController extends Controller
                 $user->save();
                 error_log('Token guardado para el usuario: ' . $user->email);
             }
-    
-            // Devolver una respuesta exitosa
-            // $response = [
-            //     'success' => true,
-            //     'message' => 'Inicio de sesión exitoso',
-            //     'data' => [
-            //         'user' => $user,
-            //         'token' => $token,
-            //         'token_type' => 'bearer',
-            //         'expires_in' => Auth::factory()->getTTL() * 60,
-            //     ],
-            // ];
-    
-            // error_log(json_encode($response, JSON_PRETTY_PRINT));
-            // return response()->json($response, 200);
+            
 
-            //Helper retorna lo mismo en el mismo formato que lo de arriba
+            error_log("User: ". $user);
+            error_log("user->direcciones: ". $user->direcciones);
+            error_log("user->direcciones->direccion: ". $user->direcciones[0]->direccion);
+            
+            $direccion = $user->direcciones[0]->direccion ? $user->direcciones[0]->direccion : "--------";
+            error_log("direccion: ". $direccion);
 
-
-            $direccion = $user->direccion ? $user->direccion->direccion : "--------";
+            
             $user->direccion = $direccion;
+            error_log("user->direccion: ". $user->direccion);
+
+            error_log("Userfinal::::: ". $user);
 
             return ResponseHelper::success('Inicio de sesión exitoso', [
                 'user' => $user,
@@ -124,28 +112,12 @@ class AuthController extends Controller
             );
     
         } catch (ValidationException $e) {
-            // $response = [
-            //     'success' => false,
-            //     'message' => 'Datos de inicio de sesión inválidos',
-            //     'errors' => $e->errors(),
-            // ];
-    
-            // error_log(json_encode($response, JSON_PRETTY_PRINT));
-            // return response()->json($response, 400);
 
             return ResponseHelper::error('Datos de inicio de sesión inválidos', ['error' => $e->getMessage()]);
 
 
     
         } catch (\Exception $e) {
-            // $response = [
-            //     'success' => false,
-            //     'message' => 'Error al iniciar sesión',
-            //     'errors' => ['error' => $e->getMessage()],
-            // ];
-    
-            // error_log(json_encode($response, JSON_PRETTY_PRINT));
-            // return response()->json($response, 500);
 
             return ResponseHelper::error('Error al iniciar sesión', ['error' => $e->getMessage()], 500);
         }

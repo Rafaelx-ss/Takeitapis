@@ -82,8 +82,6 @@ class UsuarioController extends Controller
                 
             } else { 
                 if ($key === 'password') {
-                    $user->$key = bcrypt($valor);
-                }  else {
                     $user->$key = $valor;
                 }
 
